@@ -270,9 +270,9 @@ function handleMouseleave() {
       v-if="!collapse && !isSidebarMixed"
       v-model:expand-on-hover="expandOnHover"
     />
-    <div v-if="slots.logo" :style="headerStyle">
+    <!-- <div v-if="slots.logo" :style="headerStyle">
       <slot name="logo"></slot>
-    </div>
+    </div> -->
     <VbenScrollbar :style="contentStyle" shadow shadow-border>
       <slot></slot>
     </VbenScrollbar>
