@@ -68,48 +68,48 @@ const localRoutes: RouteRecordStringComponent[] = [
  * 这里放本地路由
  */
 export const localMenuList: RouteRecordStringComponent[] = [
-  {
-    component: 'BasicLayout',
-    meta: {
-      order: -1,
-      title: 'page.dashboard.title',
-      // 不使用基础布局（仅在顶级生效）
-      noBasicLayout: true,
-    },
-    name: 'Dashboard',
-    path: '/',
-    redirect: '/analytics',
-    children: [
-      {
-        name: 'Analytics',
-        path: '/analytics',
-        component: '/dashboard/analytics/index',
-        meta: {
-          affixTab: true,
-          title: 'page.dashboard.analytics',
-        },
-      },
-      {
-        name: 'Workspace',
-        path: '/workspace',
-        component: '/dashboard/workspace/index',
-        meta: {
-          title: 'page.dashboard.workspace',
-        },
-      },
-      // {
-      //   name: 'VbenDocument',
-      //   path: '/vben-admin/document',
-      //   component: 'IFrameView',
-      //   meta: {
-      //     icon: 'lucide:book-open-text',
-      //     iframeSrc: 'https://dapdap.top',
-      //     keepAlive: true,
-      //     title: $t('demos.vben.document'),
-      //   },
-      // },
-    ],
-  },
+  // {
+  //   component: 'BasicLayout',
+  //   meta: {
+  //     order: -1,
+  //     title: 'page.dashboard.title',
+  //     // 不使用基础布局（仅在顶级生效）
+  //     noBasicLayout: true,
+  //   },
+  //   name: 'Dashboard',
+  //   path: '/',
+  //   redirect: '/analytics',
+  //   children: [
+  //     {
+  //       name: 'Analytics',
+  //       path: '/analytics',
+  //       component: '/dashboard/analytics/index',
+  //       meta: {
+  //         affixTab: true,
+  //         title: 'page.dashboard.analytics',
+  //       },
+  //     },
+  //     {
+  //       name: 'Workspace',
+  //       path: '/workspace',
+  //       component: '/dashboard/workspace/index',
+  //       meta: {
+  //         title: 'page.dashboard.workspace',
+  //       },
+  //     },
+  //     // {
+  //     //   name: 'VbenDocument',
+  //     //   path: '/vben-admin/document',
+  //     //   component: 'IFrameView',
+  //     //   meta: {
+  //     //     icon: 'lucide:book-open-text',
+  //     //     iframeSrc: 'https://dapdap.top',
+  //     //     keepAlive: true,
+  //     //     title: $t('demos.vben.document'),
+  //     //   },
+  //     // },
+  //   ],
+  // },
   // {
   //   component: '/_core/about/index',
   //   meta: {
