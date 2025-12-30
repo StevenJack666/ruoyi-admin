@@ -25,11 +25,11 @@ export const columns: VxeGridProps['columns'] = [
             },
         },
     },
-    // {
-    //     field: 'action',
-    //     fixed: 'right',
-    //     slots: { default: 'action' },
-    //     title: '操作',
-    //     width: 320,
-    // },
+    {
+        field: 'action',
+        fixed: 'right',
+        slots: { default: 'action' },
+        title: '操作',
+        width: 320,
+    },
 ];

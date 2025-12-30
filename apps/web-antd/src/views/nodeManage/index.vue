@@ -4,6 +4,7 @@ import type { VbenFormProps } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { columns } from './data';
+import type { NodeInfo } from './index.d';
 import { workflowApi } from '#/api/workflow';
 import { Modal, Popconfirm, Space, Button } from 'ant-design-vue';
 import AddModal from './modal.vue';
@@ -60,8 +61,20 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 
 // 新建工作流
 function handleAdd() {
-  console.log('modelApi',modalApi)
+  console.log('modelApi', modalApi);
   // modalApi.setData({});
+  modalApi.open();
+}
+
+// 编辑工作流基本信息
+function handleEditInfo(record: NodeInfo) {
+  modalApi.setData({
+    uuid: record.uuid,
+    name: record.name,
+    title: record.title,
+    remark: record.remark,
+    isEnable: record.isEnable,
+  });
   modalApi.open();
 }
 </script>
@@ -73,6 +86,11 @@ function handleAdd() {
           <Button type="primary" @click="handleAdd"> 新建节点 </Button>
         </Space>
       </template>
+      <template #action="{ row }">
+        <Space>
+          <ghost-button @click.stop="handleEditInfo(row)"> 编辑 </ghost-button>
+        </Space></template
+      >
     </BasicTable>
     <AddNodeModal @reload="tableApi.query()" />
   </Page>
