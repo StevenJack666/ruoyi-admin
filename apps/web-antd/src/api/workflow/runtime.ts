@@ -51,7 +51,8 @@ export async function workflowRuntimeResume(p: WorkflowResumeParams) {
   return workflowResumeImpl(p)
 }
 
-let uploadAction = '/api/file/upload'
+// let uploadAction = '/api/file/upload'
+let uploadAction = '/resource/oss/upload'
 export function setUploadAction(url: string) { uploadAction = url }
 export function getUploadAction() { return uploadAction }
 
