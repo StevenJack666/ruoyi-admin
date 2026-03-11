@@ -91,7 +91,7 @@ const diffLoginTime = computed(() => {
 </script>
 
 <template>
-  <BasicModal :footer="false" :fullscreen-button="false" title="信息">
+  <BasicModal :footer="false" :fullscreen-button="false" title="详情">
     <Descriptions v-if="currentData" size="small" :column="1" bordered>
       <DescriptionsItem label="agent名称">
         {{ currentData.name || '-' }}
@@ -106,7 +106,7 @@ const diffLoginTime = computed(() => {
         {{ currentData.toolConfig || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="是否激活">
-        {{ currentData.isActive || '-' }}
+        {{ currentData.isActive=== 'ENABLED' ? '是' : '否'  || '-' }}
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}
