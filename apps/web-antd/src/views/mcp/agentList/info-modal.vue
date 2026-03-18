@@ -94,19 +94,22 @@ const diffLoginTime = computed(() => {
   <BasicModal :footer="false" :fullscreen-button="false" title="详情">
     <Descriptions v-if="currentData" size="small" :column="1" bordered>
       <DescriptionsItem label="agent名称">
-        {{ currentData.name || '-' }}
+        {{ currentData.marketName || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="描述">
         {{ currentData.description || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="Skill">
+      <DescriptionsItem label="编排配置">
+        {{ currentData.configJson || '-' }}
+      </DescriptionsItem>
+      <!-- <DescriptionsItem label="Skill">
         {{ currentData.skillConfig || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="toolConfig">
         {{ currentData.toolConfig || '-' }}
-      </DescriptionsItem>
+      </DescriptionsItem> -->
       <DescriptionsItem label="是否激活">
-        {{ currentData.isActive=== 'ENABLED' ? '是' : '否'  || '-' }}
+        {{ currentData.status == '1' ? '是' : '否' || '-' }}
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}

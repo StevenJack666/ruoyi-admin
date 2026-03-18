@@ -11,18 +11,16 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  mcpMarketChangeStatus,
-  mcpMarketExport,
-  mcpMarketList,
-  mcpMarketRefresh,
-  mcpMarketRemove,
-} from '#/api/mcp/market';
+import { getAgentList, getToolList, delAgent } from '#/api/mcp/agent';
 import { TableSwitch } from '#/components/table';
 import { commonDownloadExcel } from '#/utils/file/download';
 import infoModal from './info-modal.vue';
 import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
+
+import { ref, onMounted } from 'vue';
+
+const toolOptions = ref<{ label: string; value: string | number }[]>([]);
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -47,23 +45,11 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const fakeData: McpMarket[] = Array.from({ length: 10 }).map(
-          (_, i) => ({
-            id: i + 1,
-            name: `测试数据${i + 1}`,
-            isActive: i % 2 === 0 ? 'ENABLED' : 'DISABLED',
-            skillConfig: `skill数据${i + 1}`,
-            toolConfig: `工具数据${i + 1}`,
-            description: `描述数据${i + 1}`,
-            // 其他字段根据 McpMarket 类型补全
-          }),
-        );
-
-        return {
-          code: 200,
-          rows: fakeData,
-          total: fakeData.length,
-        };
+        return await getAgentList({
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
+        });
       },
     },
   },
@@ -99,17 +85,55 @@ const [InfoModal, modalApi] = useVbenModal({
 });
 
 function handleAdd() {
-  drawerApi.setData({});
+  console.log('Passing toolOptions:', toolOptions.value);
+  drawerApi.setData({
+    toolOptions: toolOptions.value,
+    formData: {},
+  });
+  // drawerApi.setData({});
   drawerApi.open();
 }
 
+async function fetchToolList() {
+  try {
+    const res = await getToolList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
+
+    console.log('eeeeeeeeee');
+    const tools = res?.rows || res || [];
+    toolOptions.value = tools.map((tool: any) => ({
+      label: tool.name || tool.toolName, // Adjust field names based on API
+      value: tool.id || tool.code,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
+
 async function handleEdit(record: McpMarket) {
-  drawerApi.setData({ id: record.id });
+  console.log('record.id:', record.id);
+  drawerApi.setData({
+    id: record.id,
+    toolOptions: toolOptions.value,
+    formData: {
+      id: record.id,
+      marketName: record.marketName,
+      description: record.description,
+      skillIds: record?.skillIds,
+      toolIds: record?.toolIds,
+      configJson: record.configJson,
+      status: record.status,
+    },
+  });
   drawerApi.open();
 }
 
 async function handleDelete(row: McpMarket) {
-  await mcpMarketRemove([row.id]);
+  await delAgent([row.id]);
   await tableApi.query();
 }
 
@@ -121,7 +145,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await mcpMarketRemove(ids);
+      await delAgent(ids);
       await tableApi.query();
     },
   });
@@ -139,19 +163,23 @@ async function handleRefresh(row: McpMarket) {
   }
 }
 
-function handleDownloadExcel() {
-  commonDownloadExcel(
-    mcpMarketExport,
-    'MCP市场数据',
-    tableApi.formApi.form.values,
-  );
-}
+// function handleDownloadExcel() {
+//   commonDownloadExcel(
+//     mcpMarketExport,
+//     'MCP市场数据',
+//     tableApi.formApi.form.values,
+//   );
+// }
 function handleInfo(row: McpMarket) {
   modalApi.setData({ row });
   modalApi.open();
 }
 
 const { hasAccessByCodes } = useAccess();
+
+onMounted(() => {
+  fetchToolList();
+});
 </script>
 
 <template>
@@ -159,12 +187,12 @@ const { hasAccessByCodes } = useAccess();
     <BasicTable table-title="agent列表">
       <template #toolbar-tools>
         <Space>
-          <a-button
+          <!-- <a-button
             v-access:code="['mcp:market:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
-          </a-button>
+          </a-button> -->
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
@@ -183,15 +211,29 @@ const { hasAccessByCodes } = useAccess();
           </a-button>
         </Space>
       </template>
-      <template #isActive="{ row }">
-        <a-tag :color="row.isActive === 'ENABLED' ? 'green' : 'red'">
-          {{ row.isActive === 'ENABLED' ? '是' : '否' }}
+      <!-- <template #status="{ row }">
+        <TableSwitch
+          v-model:value="row.status"
+          :disabled="!hasAccessByCodes(['agent:market:edit'])"
+          :checked-value="1"
+          :unchecked-value="0"
+        />
+      </template> -->
+      <template #status="{ row }">
+        <a-tag :color="row.status == '1' ? 'green' : 'red'">
+          {{ row.status == '1' ? '是' : '否' }}
         </a-tag>
       </template>
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <!-- <Popconfirm
+          <ghost-button
+            v-access:code="['agent:market:edit']"
+            @click.stop="handleEdit(row)"
+          >
+            {{ $t('pages.common.edit') }}
+          </ghost-button>
+          <Popconfirm
             :get-popup-container="getVxePopupContainer"
             placement="left"
             title="确认删除？"
@@ -199,12 +241,12 @@ const { hasAccessByCodes } = useAccess();
           >
             <ghost-button
               danger
-              v-access:code="['mcp:market:remove']"
+              v-access:code="['agent:market:remove']"
               @click.stop=""
             >
               {{ $t('pages.common.delete') }}
             </ghost-button>
-          </Popconfirm> -->
+          </Popconfirm>
         </Space>
       </template>
     </BasicTable>

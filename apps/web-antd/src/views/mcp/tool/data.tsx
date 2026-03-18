@@ -38,7 +38,7 @@ export const columns: VxeGridProps['columns'] = [
     title: 'ID',
     field: 'id',
     // width: 80,
-    visible:false
+    visible: false,
   },
   {
     title: '工具名称',
@@ -63,6 +63,11 @@ export const columns: VxeGridProps['columns'] = [
       };
       return typeMap[cellValue] || cellValue;
     },
+  },
+  {
+    title: '工具标签',
+    field: 'toolTag',
+    width: 100,
   },
   {
     title: '状态',
@@ -125,6 +130,14 @@ export const drawerSchema: FormSchemaGetter = () => [
     fieldName: 'type',
     label: '工具类型',
     rules: 'selectRequired',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: [],
+    },
+    fieldName: 'toolTag',
+    label: '工具标签',
   },
   {
     component: 'RadioGroup',

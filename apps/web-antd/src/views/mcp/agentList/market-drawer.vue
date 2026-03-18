@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { mcpMarketAdd, mcpMarketInfo, mcpMarketUpdate } from '#/api/mcp/market';
+import { addAgent, editAgent, agentInfo } from '#/api/mcp/agent';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
+import { message } from 'ant-design-vue';
 
+const localToolOptions = ref<{ label: string; value: string | number }[]>([]);
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
@@ -26,7 +28,21 @@ const [BasicForm, formApi] = useVbenForm({
     },
   },
   layout: 'vertical',
-  schema: drawerSchema(),
+  // schema: drawerSchema(),
+  schema: computed(() => {
+    const schema = drawerSchema();
+
+    // Find and update toolConfig field with dynamic options
+    const toolConfigField = schema.find((item) => item.fieldName === 'toolIds');
+    if (toolConfigField) {
+      toolConfigField.componentProps = {
+        ...toolConfigField.componentProps,
+        options: localToolOptions.value,
+      };
+    }
+
+    return schema;
+  }),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2 gap-x-4',
 });
@@ -48,11 +64,29 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     }
     drawerApi.drawerLoading(true);
 
-    const { id } = drawerApi.getData() as { id?: number | string };
-    isUpdate.value = !!id;
-    if (isUpdate.value && id) {
-      const record = await mcpMarketInfo(id);
-      await formApi.setValues(record);
+    const data = drawerApi.getData() as {
+      id?: number | string;
+      toolOptions?: { label: string; value: string | number }[];
+      formData?: Record<string, any>;
+    };
+    if (data?.toolOptions && data.toolOptions.length > 0) {
+      localToolOptions.value = data.toolOptions;
+      console.log('工具选项已加载:', localToolOptions.value);
+    }
+
+    // const { id } = drawerApi.getData() as { id?: number | string };
+    isUpdate.value = !!data?.id;
+    if (isUpdate.value && data?.id) {
+      try {
+        const record = await agentInfo(data.id);
+
+        await formApi.setValues(record);
+      } catch (error) {
+        message.error('加载详情失败');
+      }
+    }
+    if (data?.formData) {
+      await formApi.setValues(data.formData);
     }
     await markInitialized();
 
@@ -69,16 +103,19 @@ async function handleConfirm() {
     }
     const data = cloneDeep(await formApi.getValues());
     // 验证JSON格式
-    if (data.authConfig) {
+    if (data.configJson) {
       try {
-        JSON.parse(data.authConfig);
+        JSON.parse(data.configJson);
       } catch (e) {
-        formApi.setFieldValue('authConfig', data.authConfig);
+        message.error('编排配置必须是合法的 JSON 格式');
+        // 定位到该字段
+        formApi.scrollToField('configJson');
+        // formApi.setFieldValue('authConfig', data.authConfig);
         drawerApi.lock(false);
         return;
       }
     }
-    await (isUpdate.value ? mcpMarketUpdate(data) : mcpMarketAdd(data));
+    await (isUpdate.value ? editAgent(data) : addAgent(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();
