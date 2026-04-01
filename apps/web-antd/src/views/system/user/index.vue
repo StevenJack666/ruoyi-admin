@@ -38,6 +38,7 @@ import userDrawer from './user-drawer.vue';
 import userImportModal from './user-import-modal.vue';
 import userInfoModal from './user-info-modal.vue';
 import userResetPwdModal from './user-reset-pwd-modal.vue';
+import avatarIcon from '#/assets/images/avatar.webp';
 
 /**
  * 导入
@@ -232,7 +233,8 @@ const { hasAccessByCodes } = useAccess();
         </template>
         <template #avatar="{ row }">
           <!-- 可能要判断空字符串情况 所以没有使用?? -->
-          <Avatar :src="row.avatar || preferences.app.defaultAvatar" />
+          <!-- <Avatar :src="row.avatar || preferences.app.defaultAvatar" /> -->
+          <Avatar :src="row.avatar || avatarIcon" />
         </template>
         <template #status="{ row }">
           <TableSwitch

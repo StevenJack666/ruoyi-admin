@@ -161,14 +161,14 @@ async function handleCancel() {
       <FormItem label="厂商编码" v-bind="validateInfos.providerCode">
         <Input v-model:value="formData.providerCode" :placeholder="$t('ui.formRules.required')" />
       </FormItem>
-      <FormItem label="厂商图标" v-bind="validateInfos.providerIcon">
+      <!-- <FormItem label="厂商图标" v-bind="validateInfos.providerIcon">
         <ImageUpload
           v-model:value="formData.providerIcon"
           :max-count="1"
           help-message
           keep-missing-id
         />
-      </FormItem>
+      </FormItem> -->
       <FormItem label="厂商描述" v-bind="validateInfos.providerDesc">
         <Textarea
           v-model:value="formData.providerDesc"

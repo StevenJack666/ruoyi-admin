@@ -30,6 +30,7 @@ import { resetRoutes } from '#/router';
 import { useAuthStore, useNotifyStore } from '#/store';
 import { useTenantStore } from '#/store/tenant';
 import LoginForm from '#/views/_core/authentication/login.vue';
+import avatarIcon from '#/assets/images/avatar.webp';
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -58,7 +59,8 @@ const menus = computed(() => {
 });
 
 const avatar = computed(() => {
-  return userStore.userInfo?.avatar || preferences.app.defaultAvatar;
+  // return userStore.userInfo?.avatar || preferences.app.defaultAvatar;
+  return userStore.userInfo?.avatar || avatarIcon;
 });
 
 async function handleLogout() {

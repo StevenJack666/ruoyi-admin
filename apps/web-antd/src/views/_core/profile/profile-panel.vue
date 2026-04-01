@@ -15,6 +15,7 @@ import {
 
 import { userUpdateAvatar } from '#/api/system/profile';
 import { CropperAvatar } from '#/components/cropper';
+import avatarIcon from '#/assets/images/avatar.webp';
 
 const props = defineProps<{ profile?: UserProfile }>();
 
@@ -24,7 +25,8 @@ defineEmits<{
 }>();
 
 const avatar = computed(
-  () => props.profile?.user.avatar || preferences.app.defaultAvatar,
+  // () => props.profile?.user.avatar || preferences.app.defaultAvatar,
+  () => props.profile?.user.avatar || avatarIcon,
 );
 
 const { isDark } = usePreferences();

@@ -21,11 +21,11 @@ export const querySchema: FormSchemaGetter = () => [
  */
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
-  {
-    title: '厂商图标',
-    field: 'providerIcon',
-    slots: { default: 'providerIcon' },
-  },
+  // {
+  //   title: '厂商图标',
+  //   field: 'providerIcon',
+  //   slots: { default: 'providerIcon' },
+  // },
   {
     title: '厂商名称',
     field: 'providerName',

@@ -22,6 +22,7 @@ import { useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
 import AnalyticsVisitsSource from '../analytics/analytics-visits-source.vue';
+import avatarIcon from '#/assets/images/avatar.webp';
 
 const userStore = useUserStore();
 
@@ -235,9 +236,10 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
 
 <template>
   <div class="p-5">
-    <WorkbenchHeader
+    <!-- <WorkbenchHeader
       :avatar="userStore.userInfo?.avatar || preferences.app.defaultAvatar"
-    >
+    > -->
+    <WorkbenchHeader :avatar="userStore.userInfo?.avatar || avatarIcon">
       <template #title>
         早安, {{ userStore.userInfo?.realName }}, 开始您一天的工作吧！
       </template>
