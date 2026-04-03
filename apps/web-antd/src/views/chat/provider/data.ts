@@ -5,12 +5,12 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'providerName',
-    label: '厂商名称',
+    label: '名称',
   },
   {
     component: 'Input',
     fieldName: 'providerCode',
-    label: '厂商编码',
+    label: '编码',
   },
 ];
 
@@ -27,16 +27,16 @@ export const columns: VxeGridProps['columns'] = [
   //   slots: { default: 'providerIcon' },
   // },
   {
-    title: '厂商名称',
+    title: '名称',
     field: 'providerName',
   },
   {
-    title: '厂商编码',
+    title: '编码',
     field: 'providerCode',
   },
 
   {
-    title: '厂商描述',
+    title: '描述',
     field: 'providerDesc',
   },
   {

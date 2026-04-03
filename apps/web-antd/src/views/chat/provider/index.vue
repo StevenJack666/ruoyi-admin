@@ -141,7 +141,7 @@ function handleDownloadExcel() {
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="厂商管理列表">
+    <BasicTable table-title="管理列表">
       <template #toolbar-tools>
         <Space>
           <Tooltip title="预览图片">

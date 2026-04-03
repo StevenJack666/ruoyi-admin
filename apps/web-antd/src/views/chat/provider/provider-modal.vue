@@ -59,10 +59,10 @@ type AntdFormRules<T> = Partial<Record<keyof T, RuleObject[]>> & {
  */
 const formRules = ref<AntdFormRules<ProviderForm>>({
     providerName: [
-      { required: true, message: "厂商名称不能为空" }
+      { required: true, message: "名称不能为空" }
     ],
     providerCode: [
-      { required: true, message: "厂商编码不能为空" }
+      { required: true, message: "编码不能为空" }
     ],
 });
 
@@ -155,10 +155,10 @@ async function handleCancel() {
 <template>
   <BasicModal :title="title">
     <Form :label-col="{ span: 4 }">
-      <FormItem label="厂商名称" v-bind="validateInfos.providerName">
+      <FormItem label="名称" v-bind="validateInfos.providerName">
         <Input v-model:value="formData.providerName" :placeholder="$t('ui.formRules.required')" />
       </FormItem>
-      <FormItem label="厂商编码" v-bind="validateInfos.providerCode">
+      <FormItem label="编码" v-bind="validateInfos.providerCode">
         <Input v-model:value="formData.providerCode" :placeholder="$t('ui.formRules.required')" />
       </FormItem>
       <!-- <FormItem label="厂商图标" v-bind="validateInfos.providerIcon">
@@ -169,7 +169,7 @@ async function handleCancel() {
           keep-missing-id
         />
       </FormItem> -->
-      <FormItem label="厂商描述" v-bind="validateInfos.providerDesc">
+      <FormItem label="描述" v-bind="validateInfos.providerDesc">
         <Textarea
           v-model:value="formData.providerDesc"
           :placeholder="$t('ui.formRules.required')"

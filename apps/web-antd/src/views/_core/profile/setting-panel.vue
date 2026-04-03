@@ -17,11 +17,11 @@ const settingList = [
     key: '2',
     name: '安全设置',
   },
-  {
-    component: AccountBind,
-    key: '3',
-    name: '账号绑定',
-  },
+  // {
+  //   component: AccountBind,
+  //   key: '3',
+  //   name: '账号绑定',
+  // },
   {
     component: OnlineDevice,
     key: '4',

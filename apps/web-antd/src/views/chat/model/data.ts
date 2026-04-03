@@ -41,7 +41,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'modelDescribe',
   },
   {
-    title: '模型供应商',
+    title: '来源',
     field: 'providerCode',
   },
   {
