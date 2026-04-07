@@ -65,13 +65,13 @@ export const useAuthStore = defineStore('auth', () => {
           : await router.push(preferences.app.defaultHomePath);
       }
 
-      if (userInfo?.realName) {
-        notification.success({
-          description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
-          duration: 3,
-          message: $t('authentication.loginSuccess'),
-        });
-      }
+      // if (userInfo?.realName) {
+      //   notification.success({
+      //     description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+      //     duration: 3,
+      //     message: $t('authentication.loginSuccess'),
+      //   });
+      // }
     } finally {
       loginLoading.value = false;
     }

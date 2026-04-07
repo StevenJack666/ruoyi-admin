@@ -5,6 +5,7 @@ interface NotificationItem {
   message: string;
   title: string;
   userId: number | string;
+  messageId?: number | string;
 }
 
 export type { NotificationItem };

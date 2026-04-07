@@ -30,6 +30,17 @@ const localRoutes: RouteRecordStringComponent[] = [
  */
 export const localMenuList: RouteRecordStringComponent[] = [
   {
+    component: '/welcome/index',
+    meta: {
+      icon: 'mi:home',
+      order: -2,
+      title: '欢迎',
+      affixTab: true,
+    },
+    name: 'Welcome',
+    path: '/welcome',
+  },
+  {
     component: 'BasicLayout',
     meta: {
       order: -1,
@@ -47,7 +58,7 @@ export const localMenuList: RouteRecordStringComponent[] = [
         component: '/dashboard/analytics/index',
         meta: {
           icon: 'lucide:book-open-text',
-          affixTab: true,
+          affixTab: false,
           title: 'page.dashboard.analytics',
         },
       },

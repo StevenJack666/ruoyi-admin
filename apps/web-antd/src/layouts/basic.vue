@@ -122,6 +122,7 @@ watch(
         @make-all="notifyStore.setAllRead"
         @read="notifyStore.setRead"
         @view-all="handleViewAll"
+        @get-all="notifyStore.getAllMessage"
       />
     </template>
     <template #extra>

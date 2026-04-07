@@ -34,9 +34,15 @@ const emit = defineEmits<{
   makeAll: [];
   read: [NotificationItem];
   viewAll: [];
+  getAll:[]
 }>();
 
 const [open, toggle] = useToggle();
+
+function handleShowNotity() {
+  toggle();
+  emit('getAll');
+}
 
 function close() {
   open.value = false;
@@ -47,12 +53,13 @@ function handleViewAll() {
   close();
 }
 
-function handleMakeAll() {
+async function handleMakeAll() {
   emit('makeAll');
 }
 
 function handleClear() {
   emit('clear');
+   close();
 }
 
 function handleClick(item: NotificationItem) {
@@ -65,7 +72,7 @@ function handleClick(item: NotificationItem) {
     content-class="relative right-2 w-[360px] p-0"
   >
     <template #trigger>
-      <div class="flex-center mr-2 h-full" @click.stop="toggle()">
+      <div class="flex-center mr-2 h-full" @click.stop="handleShowNotity">
         <VbenIconButton class="bell-button text-foreground relative">
           <span
             v-if="dot"

@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import { defineStore } from 'pinia';
 
 import { useSseMessage } from '#/utils/message';
+import { getAllNotify, markNotify, readNotify, removeNotify } from '#/api/notify';
 
 export const useNotifyStore = defineStore(
   'app-notify',
@@ -34,7 +35,9 @@ export const useNotifyStore = defineStore(
     /**
      * 开始监听sse消息
      */
-    function startListeningMessage() {
+    async function startListeningMessage() {
+
+      getAllMessage()
       // 默认sse 使用 websocket自行开启注释
       // const websocketReturnData = useWebSocketMessage();
       // if (!websocketReturnData) {
@@ -51,9 +54,10 @@ export const useNotifyStore = defineStore(
       watch(data, (message) => {
         if (!message) return;
         console.log(`接收到消息: ${message}`);
-
+        const messageObj = JSON.parse(message);
+        console.log('接收到消息-2:', message.message);
         notification.success({
-          description: message,
+          description: messageObj?.message,
           duration: 3,
           message: $t('component.notice.received'),
         });
@@ -63,7 +67,7 @@ export const useNotifyStore = defineStore(
           avatar: SvgMessageUrl,
           date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
           isRead: false,
-          message,
+          message: messageObj.message,
           title: $t('component.notice.title'),
           userId: userId.value,
         });
@@ -73,37 +77,96 @@ export const useNotifyStore = defineStore(
       });
     }
 
+    // 获取所有消息
+    async function getAllMessage() {
+      const result = await getAllNotify({
+        pageSize: 100,
+        pageNum: 1
+      });
+
+      // Ensure result.rows exists and map them to NotificationItem format if necessary
+      // Assuming result.rows contains objects compatible with NotificationItem or needs mapping
+      let messageList: NotificationItem[] = result.rows?.map((item: any) => ({
+        // Map your API fields to NotificationItem fields
+        // Adjust these keys based on your actual API response structure
+        // id: item.notifyId || item.id,
+        avatar: SvgMessageUrl,
+        date: dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss'),
+        isRead: item.readStatus == '1', // Example: assuming '1' means read
+        // message: item.msgContent || item.message,
+        title: item.msgTitle || $t('component.notice.title'),
+        // userId: userId.value,
+        ...item // Spread rest properties if needed
+      })) || [];
+
+      console.log('messageList-messageList', messageList)
+
+      // 2. Merge with existing list
+      const combinedList = [...notificationList.value, ...messageList,];
+      console.log('combinedList-combinedList', combinedList)
+
+      // 3. Deduplicate based on unique ID (e.g., 'id' or 'notifyId')
+      // Use a Map to keep only the latest occurrence of each ID
+      const uniqueMap = new Map();
+      combinedList.forEach((item) => {
+        // Use a unique identifier from your data. Replace 'id' with your actual unique key
+        const key = (item as any).id || (item as any).notifyId;
+        if (key) {
+          uniqueMap.set(key, item);
+        }
+      });
+
+      // 4. Convert back to array and sort by date (newest first)
+      const uniqueList = Array.from(uniqueMap.values()).sort((a, b) => {
+        return dayjs(b.date).valueOf() - dayjs(a.date).valueOf();
+      });
+
+      // 5. Update the store
+      notificationList.value = uniqueList;
+
+      console.log('notificationList-notificationList', notificationList.value)
+    }
+
     /**
      * 设置全部已读
      */
-    function setAllRead() {
-      notificationList.value
-        .filter((item) => item.userId === userId.value)
-        .forEach((item) => {
-          item.isRead = true;
-        });
+    async function setAllRead() {
+      await markNotify()
+      getAllMessage()
+      // notificationList.value
+      //   .filter((item) => item.userId === userId.value)
+      //   .forEach((item) => {
+      //     item.isRead = true;
+      //   });
     }
 
     /**
      * 设置单条消息已读
      * @param item 通知
      */
-    function setRead(item: NotificationItem) {
-      !item.isRead && (item.isRead = true);
+    async function setRead(item: NotificationItem) {
+      // !item.isRead && (item.isRead = true);
+      const postData = [item.messageId]
+      await readNotify(postData)
       // 显示信息
       Modal.info({
         title: item.title,
         content: item.message,
       });
+
+      getAllMessage()
     }
 
     /**
      * 清空全部消息
      */
-    function clearAllMessage() {
-      notificationList.value = notificationList.value.filter(
-        (item) => item.userId !== userId.value,
-      );
+    async function clearAllMessage() {
+      await removeNotify()
+      // notificationList.value = notificationList.value.filter(
+      //   (item) => item.userId !== userId.value,
+      // );
+      notificationList.value = [];
+      getAllMessage()
     }
 
     /**
@@ -131,6 +194,7 @@ export const useNotifyStore = defineStore(
       setRead,
       showDot,
       startListeningMessage,
+      getAllMessage
     };
   },
   {
