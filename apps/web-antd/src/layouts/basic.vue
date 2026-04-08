@@ -118,11 +118,14 @@ watch(
       <Notification
         :dot="notifyStore.showDot"
         :notifications="notifyStore.notifications"
+        :isLoading="notifyStore.isLoading"
+        :hasMore="notifyStore.hasMore"
         @clear="notifyStore.clearAllMessage"
         @make-all="notifyStore.setAllRead"
         @read="notifyStore.setRead"
         @view-all="handleViewAll"
         @get-all="notifyStore.getAllMessage"
+        @load-more="notifyStore.loadMoreNOtity"
       />
     </template>
     <template #extra>

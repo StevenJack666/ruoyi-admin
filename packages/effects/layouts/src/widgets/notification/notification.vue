@@ -20,13 +20,17 @@ interface Props {
    * 消息列表
    */
   notifications?: NotificationItem[];
+  isLoading?: boolean; // 新增：加载状态
+  hasMore?: boolean; // 新增：是否有更多数据
 }
 
 defineOptions({ name: 'NotificationPopup' });
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   dot: false,
   notifications: () => [],
+  isLoading: false,
+  hasMore: true,
 });
 
 const emit = defineEmits<{
@@ -34,7 +38,8 @@ const emit = defineEmits<{
   makeAll: [];
   read: [NotificationItem];
   viewAll: [];
-  getAll:[]
+  getAll: [];
+  loadMore: [];
 }>();
 
 const [open, toggle] = useToggle();
@@ -59,12 +64,48 @@ async function handleMakeAll() {
 
 function handleClear() {
   emit('clear');
-   close();
+  close();
 }
 
 function handleClick(item: NotificationItem) {
   emit('read', item);
 }
+
+// 触发加载更多事件
+function handleLoadMore() {
+  emit('loadMore');
+}
+
+// 3. 处理滚动事件
+function onScroll(event: Event) {
+  // 如果正在加载或没有更多数据，直接返回
+  if (props.isLoading || !props.hasMore) return;
+
+  const target = event.target as HTMLElement;
+  // 判断是否滚动到底部（预留10px阈值，提升体验）
+  // scrollHeight: 总高度, scrollTop: 滚动条位置, clientHeight: 可视区域高度
+  const isBottom =
+    target.scrollHeight - target.scrollTop - target.clientHeight < 10;
+
+  if (isBottom) {
+    // loadMore();
+    handleLoadMore();
+  }
+}
+
+// // 4. 加载更多逻辑
+// function loadMore() {
+//   if (loading.value) return;
+
+//   loading.value = true;
+//   page.value++;
+
+//   // 通知父组件加载下一页数据
+//   emit('loadMore');
+
+//   // 注意：loading 状态的重置通常由父组件完成，或者在这里通过定时器模拟
+//   // 最佳实践是父组件数据更新后，通过 watch 监听 notifications 变化来重置 loading
+// }
 </script>
 <template>
   <VbenPopover
@@ -94,7 +135,11 @@ function handleClick(item: NotificationItem) {
           <MailCheck class="size-4" />
         </VbenIconButton>
       </div>
-      <VbenScrollbar v-if="notifications.length > 0">
+      <VbenScrollbar
+        v-if="notifications.length > 0"
+        ref="scrollbarRef"
+        @scroll="onScroll"
+      >
         <ul class="!flex max-h-[360px] w-full flex-col">
           <template v-for="item in notifications" :key="item.title">
             <li
@@ -116,7 +161,7 @@ function handleClick(item: NotificationItem) {
                 />
               </span>
               <div class="flex flex-col gap-1 leading-none">
-                <p class="font-semibold">{{ item.title }}</p>
+                <p class="font-semibold">{{ item.id }}{{ item.title }}</p>
                 <p class="text-muted-foreground my-1 line-clamp-2 text-xs">
                   {{ item.message }}
                 </p>
@@ -126,6 +171,21 @@ function handleClick(item: NotificationItem) {
               </div>
             </li>
           </template>
+
+          <!-- 加载状态提示 -->
+          <li
+            v-if="isLoading"
+            class="flex-center text-muted-foreground py-4 text-xs"
+          >
+            加载中...
+          </li>
+          <!-- 无更多数据提示 -->
+          <li
+            v-else-if="!hasMore"
+            class="flex-center text-muted-foreground py-4 text-xs"
+          >
+            没有更多了
+          </li>
         </ul>
       </VbenScrollbar>
 
