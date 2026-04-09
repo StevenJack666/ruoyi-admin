@@ -47,7 +47,7 @@ export const useNotifyStore = defineStore(
       isLoading.value = true;
       const nextPage = currentPage.value + 1;
       // 页码加 1
-      // currentPage.value++;
+      currentPage.value++;
       try {
         const result = await getAllNotify({
           pageSize: pageSize.value,
@@ -89,7 +89,7 @@ export const useNotifyStore = defineStore(
 
           notificationList.value = uniqueList;
 
-          console.log('加这一段判断', notificationList.value)
+          console.log('加这一段判断', notificationList.value, total)
 
           // ✅ 加这一段判断
           if (notificationList.value.length >= total) {
@@ -160,7 +160,7 @@ export const useNotifyStore = defineStore(
     async function getAllMessage() {
       // ✅ 先重置分页
       resetPagination();
-      notificationList.value = [];
+      // notificationList.value = [];
       const result = await getAllNotify({
         pageSize: pageSize.value,
         pageNum: 1
@@ -186,6 +186,14 @@ export const useNotifyStore = defineStore(
 
       console.log('messageList-messageList', messageList)
 
+      // ✅ 直接用新数据替换（不会闪空）
+      notificationList.value = messageList;
+
+      // ✅ 关键：初始化时也要判断 hasMore
+      if (notificationList.value.length >= total) {
+        hasMore.value = false;
+      }
+
       // 2. Merge with existing list
       const combinedList = [...notificationList.value, ...messageList,];
       console.log('combinedList-combinedList', combinedList)
@@ -209,10 +217,7 @@ export const useNotifyStore = defineStore(
       // 5. Update the store
       notificationList.value = uniqueList;
 
-      // ✅ 关键：初始化时也要判断 hasMore
-      if (notificationList.value.length >= total) {
-        hasMore.value = false;
-      }
+
 
       console.log('notificationList-notificationList', notificationList.value)
     }

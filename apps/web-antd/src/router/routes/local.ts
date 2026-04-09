@@ -29,17 +29,17 @@ const localRoutes: RouteRecordStringComponent[] = [
  * 这里放本地路由
  */
 export const localMenuList: RouteRecordStringComponent[] = [
-  {
-    component: '/welcome/index',
-    meta: {
-      icon: 'mi:home',
-      order: -2,
-      title: '欢迎',
-      affixTab: true,
-    },
-    name: 'Welcome',
-    path: '/welcome',
-  },
+  // {
+  //   component: '/welcome/index',
+  //   meta: {
+  //     icon: 'mi:home',
+  //     order: -2,
+  //     title: '欢迎',
+  //     affixTab: true,
+  //   },
+  //   name: 'Welcome',
+  //   path: '/welcome',
+  // },
   {
     component: 'BasicLayout',
     meta: {
@@ -50,29 +50,42 @@ export const localMenuList: RouteRecordStringComponent[] = [
     },
     name: 'Dashboard',
     path: '/',
-    redirect: '/analytics',
+    redirect: '/welcome',
     children: [
       {
-        name: 'Analytics',
-        path: '/analytics',
-        component: '/dashboard/analytics/index',
+        name: 'Welcome',
+        path: '/welcome',
+        component: '/welcome/index',
         meta: {
           icon: 'lucide:book-open-text',
-          affixTab: false,
-          title: 'page.dashboard.analytics',
+          affixTab: true,
+          title: '欢迎',
         },
       },
-      {
-        name: 'Workspace',
-        path: '/workspace',
-        component: '/dashboard/workspace/index',
-        meta: {
-          icon: 'icon-park-outline:workbench',
-          title: 'page.dashboard.workspace',
-        },
-      },
+
     ],
   },
+  // {
+  //   component: '/webChat/index',
+  //   meta: {
+  //     icon: 'mi:home',
+  //     order: 9999,
+  //     title: '发起聊天',
+  //   },
+  //   name: 'WebChat',
+  //   path: '/webChat',
+  // },
+  // {
+  //   component: '/webChat/index',
+  //   meta: {
+  //     icon: 'mi:home',
+  //     order: -2,
+  //     title: '欢迎',
+  //     affixTab: true,
+  //   },
+  //   name: 'Welcome',
+  //   path: '/welcome',
+  // },
   // {
   //   component: '/_core/about/index',
   //   meta: {
