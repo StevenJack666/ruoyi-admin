@@ -4,8 +4,8 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'reqCode',
-    label: '需求编码',
+    fieldName: 'bugCode',
+    label: 'Bug编码',
   },
   {
     component: 'Input',
@@ -40,11 +40,11 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'status',
     label: '状态',
   },
-  {
-    component: 'RangePicker',
-    fieldName: 'createTime',
-    label: '计划时间',
-  },
+  // {
+  //   component: 'RangePicker',
+  //   fieldName: 'createTime',
+  //   label: '计划时间',
+  // },
 ];
 
 export const columns: VxeGridProps['columns'] = [
@@ -56,8 +56,8 @@ export const columns: VxeGridProps['columns'] = [
     visible: false,
   },
   {
-    title: '需求编码',
-    field: 'reqCode',
+    title: 'Bug编码',
+    field: 'bugCode',
     showOverflow: true,
     // width: 200,
   },
@@ -73,28 +73,46 @@ export const columns: VxeGridProps['columns'] = [
     showOverflow: true,
     // width: 200,
   },
-
+  {
+    title: '严重程度',
+    field: 'severity',
+    showOverflow: true,
+    // width: 200,
+  },
   {
     title: '优先级',
     field: 'priority',
     showOverflow: true,
     // width: 200,
   },
+
   {
-    title: 'params',
-    field: 'params',
+    title: '发现版本',
+    field: 'foundVersion',
     showOverflow: true,
     // width: 200,
   },
   {
-    title: '来源',
-    field: 'source',
+    title: '修复版本',
+    field: 'fixedVersion',
     showOverflow: true,
     // width: 200,
   },
   {
-    title: '内容',
-    field: 'content',
+    title: '复现步骤',
+    field: 'reproduceSteps',
+    showOverflow: true,
+    // width: 200,
+  },
+  {
+    title: '预期结果',
+    field: 'expectedResult',
+    showOverflow: true,
+    // width: 200,
+  },
+  {
+    title: '实际结果',
+    field: 'actualResult',
     showOverflow: true,
     // width: 200,
   },
@@ -128,22 +146,15 @@ export const drawerSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'reqCode',
-    label: '需求编码',
+    fieldName: 'bugCode',
+    label: 'Bug编码',
     rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
-    fieldName: '标题',
-    label: 'title',
-    rules: 'required',
-    formItemClass: 'col-span-2',
-  },
-  {
-    component: 'Input',
-    fieldName: '类型',
-    label: 'type',
+    fieldName: 'title',
+    label: '标题',
     rules: 'required',
     formItemClass: 'col-span-2',
   },
@@ -161,8 +172,15 @@ export const drawerSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'source',
-    label: '来源',
+    fieldName: 'foundVersion',
+    label: 'foundVersion',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Input',
+    fieldName: 'fixedVersion',
+    label: 'fixedVersion',
     rules: 'required',
     formItemClass: 'col-span-2',
   },
@@ -171,9 +189,9 @@ export const drawerSchema: FormSchemaGetter = () => [
     componentProps: {
       rows: 3,
     },
-    fieldName: 'content',
+    fieldName: 'reproduceSteps',
     formItemClass: 'col-span-2',
-    label: '内容',
+    label: 'reproduceSteps',
   },
 
 
@@ -184,9 +202,20 @@ export const drawerSchema: FormSchemaGetter = () => [
       placeholder: '请输入合法的 JSON 格式，例如：{"key": "value"}',
     },
     // rules: 'required',
-    fieldName: 'params',
+    fieldName: 'expectedResult',
     formItemClass: 'col-span-2',
-    label: 'params',
+    label: 'expectedResult',
+  },
+  {
+    component: 'Textarea',
+    componentProps: {
+      rows: 3,
+      placeholder: '请输入合法的 JSON 格式，例如：{"key": "value"}',
+    },
+    // rules: 'required',
+    fieldName: 'actualResult',
+    formItemClass: 'col-span-2',
+    label: 'actualResult',
   },
   {
     component: 'RadioGroup',

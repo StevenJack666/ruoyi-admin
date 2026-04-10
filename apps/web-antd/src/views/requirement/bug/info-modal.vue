@@ -93,23 +93,26 @@ const diffLoginTime = computed(() => {
 <template>
   <BasicModal :footer="false" :fullscreen-button="false" title="详情">
     <Descriptions v-if="currentData" size="small" :column="1" bordered>
-      <DescriptionsItem label="需求编码">
-        {{ currentData.reqCode || '-' }}
+      <DescriptionsItem label="Bug编码">
+        {{ currentData.bugCode || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="标题">
         {{ currentData.title || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="类型">
-        {{ currentData.type || '-' }}
+      <DescriptionsItem label="foundVersion">
+        {{ currentData.foundVersion || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="优先级">
-        {{ currentData.priority || '-' }}
+      <DescriptionsItem label="fixedVersion">
+        {{ currentData.fixedVersion || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="来源">
-        {{ currentData.source || '-' }}
+      <DescriptionsItem label="reproduceSteps">
+        {{ currentData.reproduceSteps || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="内容">
-        {{ currentData.content || '-' }}
+      <DescriptionsItem label="expectedResult">
+        {{ currentData.expectedResult || '-' }}
+      </DescriptionsItem>
+      <DescriptionsItem label="actualResult">
+        {{ currentData.actualResult || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="状态">
         {{ currentData.status == '1' ? '是' : '否' || '-' }}

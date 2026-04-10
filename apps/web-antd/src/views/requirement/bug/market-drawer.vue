@@ -6,7 +6,7 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { addItem, editItem, itemInfo } from '#/api/requirement/contrItem';
+import { addBug, editBug, bugInfo } from '#/api/requirement/bug';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -80,7 +80,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     isUpdate.value = !!data?.id;
     if (isUpdate.value && data?.id) {
       try {
-        const record = await itemInfo(data.id);
+        const record = await bugInfo(data.id);
 
         await formApi.setValues(record);
       } catch (error) {
@@ -117,7 +117,7 @@ async function handleConfirm() {
     //     return;
     //   }
     // }
-    await (isUpdate.value ? editItem(data) : addItem(data));
+    await (isUpdate.value ? editBug(data) : addBug(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();
