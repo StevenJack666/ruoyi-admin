@@ -1,6 +1,7 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-
+import { getDictOptions } from '#/utils/dict';
+import { DictEnum } from '@vben/constants';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -32,19 +33,16 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Select',
     componentProps: {
-      options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
-      ],
+      options: getDictOptions(DictEnum.REQUIREMENT_ITEM_STATUS),
     },
     fieldName: 'status',
     label: '状态',
   },
-  {
-    component: 'RangePicker',
-    fieldName: 'createTime',
-    label: '计划时间',
-  },
+  // {
+  //   component: 'RangePicker',
+  //   fieldName: 'createTime',
+  //   label: '计划时间',
+  // },
 ];
 
 export const columns: VxeGridProps['columns'] = [
@@ -81,12 +79,6 @@ export const columns: VxeGridProps['columns'] = [
     // width: 200,
   },
   {
-    title: 'params',
-    field: 'params',
-    showOverflow: true,
-    // width: 200,
-  },
-  {
     title: '来源',
     field: 'source',
     showOverflow: true,
@@ -101,11 +93,17 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '状态',
     field: 'status',
-    // width: 100,
-    slots: {
-      default: 'status',
-    },
+    showOverflow: true,
+    // width: 200,
   },
+  // {
+  //   title: '状态',
+  //   field: 'status',
+  //   // width: 100,
+  //   slots: {
+  //     default: 'status',
+  //   },
+  // },
   {
     field: 'action',
     fixed: 'right',
@@ -127,27 +125,6 @@ export const drawerSchema: FormSchemaGetter = () => [
     label: 'id',
   },
   {
-    component: 'Input',
-    fieldName: 'reqCode',
-    label: '需求编码',
-    rules: 'required',
-    formItemClass: 'col-span-2',
-  },
-  {
-    component: 'Input',
-    fieldName: '标题',
-    label: 'title',
-    rules: 'required',
-    formItemClass: 'col-span-2',
-  },
-  {
-    component: 'Input',
-    fieldName: '类型',
-    label: 'type',
-    rules: 'required',
-    formItemClass: 'col-span-2',
-  },
-  {
     component: 'Select',
     fieldName: 'projectId',
     label: '项目Id',
@@ -159,6 +136,35 @@ export const drawerSchema: FormSchemaGetter = () => [
       //mode: 'multiple', // If multiple selection is needed
     },
   },
+  {
+    component: 'Input',
+    fieldName: 'reqCode',
+    label: '需求编码',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Input',
+    fieldName: 'title',
+    label: '标题',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Input',
+    fieldName: 'type',
+    label: '类型',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Input',
+    fieldName: 'priority',
+    label: '优先级',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+
   {
     component: 'Input',
     fieldName: 'source',
@@ -176,31 +182,16 @@ export const drawerSchema: FormSchemaGetter = () => [
     label: '内容',
   },
 
-
   {
-    component: 'Textarea',
-    componentProps: {
-      rows: 3,
-      placeholder: '请输入合法的 JSON 格式，例如：{"key": "value"}',
-    },
-    // rules: 'required',
-    fieldName: 'params',
-    formItemClass: 'col-span-2',
-    label: 'params',
-  },
-  {
-    component: 'RadioGroup',
-    rules: 'required',
-    componentProps: {
-      buttonStyle: 'solid',
-      options: [
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-      optionType: 'button',
-    },
-    defaultValue: '1',
+    component: 'Select',
     fieldName: 'status',
     label: '状态',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+    componentProps: {
+      options: getDictOptions(DictEnum.REQUIREMENT_ITEM_STATUS),
+      showSearch: true,
+      //mode: 'multiple', // If multiple selection is needed
+    },
   },
 ];

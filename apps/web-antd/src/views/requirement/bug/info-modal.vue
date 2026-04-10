@@ -99,23 +99,31 @@ const diffLoginTime = computed(() => {
       <DescriptionsItem label="标题">
         {{ currentData.title || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="foundVersion">
+      <DescriptionsItem label="严重程度">
+        {{ currentData.severity || '-' }}
+      </DescriptionsItem>
+      <DescriptionsItem label="优先级">
+        {{ currentData.priority || '-' }}
+      </DescriptionsItem>
+      <DescriptionsItem label="发现版本">
         {{ currentData.foundVersion || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="fixedVersion">
+      <DescriptionsItem label="修复版本">
         {{ currentData.fixedVersion || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="reproduceSteps">
+      <DescriptionsItem label="复现步骤">
         {{ currentData.reproduceSteps || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="expectedResult">
+      <DescriptionsItem label="预期结果">
         {{ currentData.expectedResult || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="actualResult">
+      <DescriptionsItem label="实际结果">
         {{ currentData.actualResult || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="状态">
-        {{ currentData.status == '1' ? '是' : '否' || '-' }}
+        <component
+          :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)"
+        />
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}

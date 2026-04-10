@@ -8,5 +8,4 @@ export interface Item {
   status: string;
   source: string;
   content: string;
-  params: Object;
 }

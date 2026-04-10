@@ -33,12 +33,12 @@ export const querySchema: FormSchemaGetter = () => [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
+        { label: '启用', value: 1 },
+        { label: '停用', value: 0 },
       ],
     },
     fieldName: 'status',
-    label: '是否激活',
+    label: '状态',
   },
 ];
 
@@ -69,23 +69,7 @@ export const columns: VxeGridProps['columns'] = [
     // width: 200,
   },
   {
-    title: 'params',
-    field: 'params',
-    showOverflow: true,
-    // width: 200,
-  },
-  // {
-  //   title: 'Skill',
-  //   field: 'skillConfig',
-  //   // width: 100,
-  // },
-  // {
-  //   title: '工具',
-  //   field: 'toolConfig',
-  //   // width: 100,
-  // },
-  {
-    title: '是否激活',
+    title: '状态',
     field: 'status',
     // width: 100,
     slots: {
@@ -135,32 +119,19 @@ export const drawerSchema: FormSchemaGetter = () => [
     formItemClass: 'col-span-2',
     label: '描述',
   },
-
-
-  {
-    component: 'Textarea',
-    componentProps: {
-      rows: 3,
-      placeholder: '请输入合法的 JSON 格式，例如：{"key": "value"}',
-    },
-    // rules: 'required',
-    fieldName: 'params',
-    formItemClass: 'col-span-2',
-    label: 'params',
-  },
   {
     component: 'RadioGroup',
     rules: 'required',
     componentProps: {
       buttonStyle: 'solid',
       options: [
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
+        { label: '启用', value: '1' },
+        { label: '停用', value: '0' },
       ],
       optionType: 'button',
     },
     defaultValue: '1',
     fieldName: 'status',
-    label: '是否激活',
+    label: '状态',
   },
 ];

@@ -93,75 +93,12 @@ const diffLoginTime = computed(() => {
 <template>
   <BasicModal :footer="false" :fullscreen-button="false" title="详情">
     <Descriptions v-if="currentData" size="small" :column="1" bordered>
-      <DescriptionsItem label="projectCode">
-        {{ currentData.projectCode || '-' }}
+      <DescriptionsItem label="标题">
+        {{ currentData.title || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="projectName">
-        {{ currentData.projectName || '-' }}
+      <DescriptionsItem label="内容">
+        {{ currentData.content || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="描述">
-        {{ currentData.description || '-' }}
-      </DescriptionsItem>
-      <!-- <DescriptionsItem label="Skill">
-        {{ currentData.skillConfig || '-' }}
-      </DescriptionsItem>
-      <DescriptionsItem label="toolConfig">
-        {{ currentData.toolConfig || '-' }}
-      </DescriptionsItem> -->
-      <DescriptionsItem label="状态">
-        {{ currentData.status == '1' ? '启用' : '停用' || '-' }}
-      </DescriptionsItem>
-      <!-- <DescriptionsItem label="用户信息">
-        {{ mixInfo }}
-      </DescriptionsItem>
-      <DescriptionsItem label="手机号">
-        {{ currentUser.phonenumber || '-' }}
-      </DescriptionsItem>
-      <DescriptionsItem label="邮箱">
-        {{ currentUser.email || '-' }}
-      </DescriptionsItem>
-      <DescriptionsItem label="岗位">
-        <div
-          v-if="currentUser.postNames.length > 0"
-          class="flex flex-wrap gap-0.5"
-        >
-          <Tag v-for="item in currentUser.postNames" :key="item">
-            {{ item }}
-          </Tag>
-        </div>
-        <span v-else>-</span>
-      </DescriptionsItem>
-      <DescriptionsItem label="权限">
-        <div
-          v-if="currentUser.roleNames.length > 0"
-          class="flex flex-wrap gap-0.5"
-        >
-          <Tag v-for="item in currentUser.roleNames" :key="item">
-            {{ item }}
-          </Tag>
-        </div>
-        <span v-else>-</span>
-      </DescriptionsItem>
-      <DescriptionsItem label="创建时间">
-        {{ currentUser.createTime }}
-      </DescriptionsItem>
-      <DescriptionsItem label="上次登录IP">
-        {{ currentUser.loginIp ?? '-' }}
-      </DescriptionsItem>
-      <DescriptionsItem label="上次登录时间">
-        <span>{{ currentUser.loginDate ?? '-' }}</span>
-        <Tag
-          class="ml-2"
-          v-if="diffLoginTime"
-          :bordered="false"
-          color="processing"
-        >
-          {{ diffLoginTime }}前
-        </Tag>
-      </DescriptionsItem>
-      <DescriptionsItem label="备注">
-        {{ currentUser.remark ?? '-' }}
-      </DescriptionsItem> -->
     </Descriptions>
   </BasicModal>
 </template>

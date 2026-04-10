@@ -201,7 +201,7 @@ onMounted(() => {
       </template> -->
       <template #status="{ row }">
         <a-tag :color="row.status == '1' ? 'green' : 'red'">
-          {{ row.status == '1' ? '是' : '否' }}
+          {{ row.status == '1' ? '启用' : '停用' }}
         </a-tag>
       </template>
       <template #action="{ row }">

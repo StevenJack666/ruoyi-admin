@@ -112,7 +112,9 @@ const diffLoginTime = computed(() => {
         {{ currentData.content || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="状态">
-        {{ currentData.status == '1' ? '是' : '否' || '-' }}
+        <component
+          :is="renderDict(currentData.status, DictEnum.REQUIREMENT_ITEM_STATUS)"
+        />
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}

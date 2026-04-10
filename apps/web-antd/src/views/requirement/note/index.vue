@@ -11,13 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  getItemList,
-  delItem,
-  getProjectList,
-  handleItemExport,
-  handleChangeStatus,
-} from '#/api/requirement/contrItem';
+import { getNoteList, delNote } from '#/api/requirement/note';
 import { TableSwitch } from '#/components/table';
 import { commonDownloadExcel } from '#/utils/file/download';
 import infoModal from './info-modal.vue';
@@ -26,7 +20,7 @@ import { columns, querySchema } from './data';
 
 import { ref, onMounted } from 'vue';
 
-const projectOptions = ref<{ label: string; value: string | number }[]>([]);
+const toolOptions = ref<{ label: string; value: string | number }[]>([]);
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -51,7 +45,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await getItemList({
+        return await getNoteList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -91,9 +85,9 @@ const [InfoModal, modalApi] = useVbenModal({
 });
 
 function handleAdd() {
-  console.log('Passing projectOptions:', projectOptions.value);
+  console.log('Passing toolOptions:', toolOptions.value);
   drawerApi.setData({
-    projectOptions: projectOptions.value,
+    toolOptions: toolOptions.value,
     formData: {},
   });
   // drawerApi.setData({});
@@ -104,7 +98,7 @@ async function handleEdit(record: McpMarket) {
   console.log('record.id:', record.id);
   drawerApi.setData({
     id: record.id,
-    projectOptions: projectOptions.value,
+    toolOptions: toolOptions.value,
     formData: {
       id: record.id,
       marketName: record.marketName,
@@ -119,7 +113,7 @@ async function handleEdit(record: McpMarket) {
 }
 
 async function handleDelete(row: McpMarket) {
-  await delItem([row.id]);
+  await delNote([row.id]);
   await tableApi.query();
 }
 
@@ -131,7 +125,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await delItem(ids);
+      await delNote(ids);
       await tableApi.query();
     },
   });
@@ -149,9 +143,13 @@ async function handleRefresh(row: McpMarket) {
   }
 }
 
-function handleDownloadExcel() {
-  commonDownloadExcel(handleItemExport, '需求项', tableApi.formApi.form.values);
-}
+// function handleDownloadExcel() {
+//   commonDownloadExcel(
+//     mcpMarketExport,
+//     'MCP市场数据',
+//     tableApi.formApi.form.values,
+//   );
+// }
 function handleInfo(row: McpMarket) {
   modalApi.setData({ row });
   modalApi.open();
@@ -160,42 +158,21 @@ function handleInfo(row: McpMarket) {
 const { hasAccessByCodes } = useAccess();
 
 onMounted(() => {
-  fetchProjectList();
+  // fetchToolList();
 });
-
-async function fetchProjectList() {
-  try {
-    const res = await getProjectList({
-      pageSize: 100,
-      pageNum: 1,
-      status: '1',
-    });
-    // Adjust based on your actual API response structure
-
-    console.log('eeeeeeeeee');
-    const projects = res?.rows || res || [];
-    projectOptions.value = projects.map((pro: any) => ({
-      label: pro.projectName, // Adjust field names based on API
-      value: pro.id,
-    }));
-  } catch (error) {
-    console.error('Fetch tool list failed:', error);
-    message.error('Failed to fetch tool list');
-  }
-}
 </script>
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="需求项列表">
+    <BasicTable table-title="笔记列表">
       <template #toolbar-tools>
         <Space>
-          <a-button
+          <!-- <a-button
             v-access:code="['mcp:market:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
-          </a-button>
+          </a-button> -->
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
@@ -214,21 +191,19 @@ async function fetchProjectList() {
           </a-button>
         </Space>
       </template>
-
       <!-- <template #status="{ row }">
         <TableSwitch
           v-model:value="row.status"
-          :api="() => handleChangeStatus(row)"
-          :checked-value="'1'"
-          :unchecked-value="'0'"
-          @reload="tableApi.query()"
+          :disabled="!hasAccessByCodes(['agent:market:edit'])"
+          :checked-value="1"
+          :unchecked-value="0"
         />
       </template> -->
-      <!-- <template #status="{ row }">
+      <template #status="{ row }">
         <a-tag :color="row.status == '1' ? 'green' : 'red'">
           {{ row.status == '1' ? '是' : '否' }}
         </a-tag>
-      </template> -->
+      </template>
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>

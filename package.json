@@ -114,5 +114,12 @@
       "canvas",
       "node-gyp"
     ]
+  },
+  "dependencies": {
+    "@kangc/v-md-editor": "^2.3.18",
+    "@vueup/vue-quill": "^1.2.0",
+    "codemirror": "6.0.1",
+    "quill": "1.3.7",
+    "vue3-quill": "^0.3.1"
   }
 }

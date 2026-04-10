@@ -3,7 +3,5 @@ export interface Project {
   projectCode: string;
   projectName: string;
   description: string;
-  params: object;
-  status: number;
-
+  status: string;
 }

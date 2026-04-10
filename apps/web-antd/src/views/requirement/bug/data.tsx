@@ -1,6 +1,7 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-
+import { getDictOptions } from '#/utils/dict';
+import { DictEnum } from '@vben/constants';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -29,17 +30,17 @@ export const querySchema: FormSchemaGetter = () => [
   //   label: '工具配置',
   // },
   ,
+
   {
     component: 'Select',
     componentProps: {
-      options: [
-        { label: '是', value: 1 },
-        { label: '否', value: 0 },
-      ],
+      options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),
     },
     fieldName: 'status',
     label: '状态',
   },
+
+
   // {
   //   component: 'RangePicker',
   //   fieldName: 'createTime',
@@ -64,12 +65,6 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
     field: 'title',
-    showOverflow: true,
-    // width: 200,
-  },
-  {
-    title: '类型',
-    field: 'type',
     showOverflow: true,
     // width: 200,
   },
@@ -116,13 +111,19 @@ export const columns: VxeGridProps['columns'] = [
     showOverflow: true,
     // width: 200,
   },
+  // {
+  //   title: '状态',
+  //   field: 'status',
+  //   // width: 100,
+  //   slots: {
+  //     default: 'status',
+  //   },
+  // },
   {
     title: '状态',
     field: 'status',
-    // width: 100,
-    slots: {
-      default: 'status',
-    },
+    showOverflow: true,
+    // width: 200,
   },
   {
     field: 'action',
@@ -172,15 +173,29 @@ export const drawerSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
+    fieldName: 'severity',
+    label: '严重程度',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Input',
+    fieldName: 'priority',
+    label: '优先级',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Input',
     fieldName: 'foundVersion',
-    label: 'foundVersion',
+    label: '发现版本',
     rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'fixedVersion',
-    label: 'fixedVersion',
+    label: '修复版本',
     rules: 'required',
     formItemClass: 'col-span-2',
   },
@@ -191,7 +206,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     },
     fieldName: 'reproduceSteps',
     formItemClass: 'col-span-2',
-    label: 'reproduceSteps',
+    label: '复现步骤',
   },
 
 
@@ -199,37 +214,34 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Textarea',
     componentProps: {
       rows: 3,
-      placeholder: '请输入合法的 JSON 格式，例如：{"key": "value"}',
+      placeholder: '请输入',
     },
     // rules: 'required',
     fieldName: 'expectedResult',
     formItemClass: 'col-span-2',
-    label: 'expectedResult',
+    label: '预期结果',
   },
   {
     component: 'Textarea',
     componentProps: {
       rows: 3,
-      placeholder: '请输入合法的 JSON 格式，例如：{"key": "value"}',
+      placeholder: '请输入',
     },
     // rules: 'required',
     fieldName: 'actualResult',
     formItemClass: 'col-span-2',
-    label: 'actualResult',
+    label: '实际结果',
   },
   {
-    component: 'RadioGroup',
-    rules: 'required',
-    componentProps: {
-      buttonStyle: 'solid',
-      options: [
-        { label: '是', value: '1' },
-        { label: '否', value: '0' },
-      ],
-      optionType: 'button',
-    },
-    defaultValue: '1',
+    component: 'Select',
     fieldName: 'status',
     label: '状态',
+    rules: 'required',
+    formItemClass: 'col-span-2',
+    componentProps: {
+      options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),
+      showSearch: true,
+      //mode: 'multiple', // If multiple selection is needed
+    },
   },
 ];
