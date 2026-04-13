@@ -2,6 +2,8 @@ import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { getDictOptions } from '#/utils/dict';
 import { DictEnum } from '@vben/constants';
+import RichText from '#/components/RichText/index.vue';
+import { markRaw } from 'vue';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -73,12 +75,33 @@ export const columns: VxeGridProps['columns'] = [
     field: 'severity',
     showOverflow: true,
     // width: 200,
+    slots: {
+      default: 'severity',
+    },
   },
   {
     title: '优先级',
     field: 'priority',
     showOverflow: true,
     // width: 200,
+  },
+  {
+    title: '负责人',
+    field: 'assigneeId',
+    showOverflow: true,
+    // width: 200,
+    slots: {
+      default: 'assignee',
+    },
+  },
+  {
+    title: '创建人',
+    field: 'ownerId',
+    showOverflow: true,
+    // width: 200,
+    slots: {
+      default: 'owner',
+    },
   },
 
   {
@@ -145,13 +168,13 @@ export const drawerSchema: FormSchemaGetter = () => [
     fieldName: 'id',
     label: 'id',
   },
-  {
-    component: 'Input',
-    fieldName: 'bugCode',
-    label: 'Bug编码',
-    rules: 'required',
-    formItemClass: 'col-span-2',
-  },
+  // {
+  //   component: 'Input',
+  //   fieldName: 'bugCode',
+  //   label: 'Bug编码',
+  //   rules: 'required',
+  //   formItemClass: 'col-span-2',
+  // },
   {
     component: 'Input',
     fieldName: 'title',
@@ -172,44 +195,79 @@ export const drawerSchema: FormSchemaGetter = () => [
     },
   },
   {
-    component: 'Input',
-    fieldName: 'severity',
-    label: '严重程度',
+    component: 'Select',
+    fieldName: 'assigneeId',
+    label: '负责人',
     rules: 'required',
     formItemClass: 'col-span-2',
+    componentProps: {
+      options: [], // Will be populated dynamically
+      showSearch: true,
+      //mode: 'multiple', // If multiple selection is needed
+    },
   },
   {
-    component: 'Input',
+    component: 'Select',
+    fieldName: 'severity',
+    label: '严重程度',
+    formItemClass: 'col-span-2',
+    componentProps: {
+      options: getDictOptions(DictEnum.BUG_SEVERITY),
+      showSearch: true,
+      //mode: 'multiple', // If multiple selection is needed
+    },
+  },
+  {
+    component: 'Select',
     fieldName: 'priority',
     label: '优先级',
-    rules: 'required',
     formItemClass: 'col-span-2',
+    componentProps: {
+      options: getDictOptions(DictEnum.BUG_PRIORITY),
+      showSearch: true,
+      //mode: 'multiple', // If multiple selection is needed
+    },
   },
   {
     component: 'Input',
     fieldName: 'foundVersion',
     label: '发现版本',
-    rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'fixedVersion',
     label: '修复版本',
-    rules: 'required',
     formItemClass: 'col-span-2',
   },
+  // {
+  //   component: 'Textarea',
+  //   componentProps: {
+  //     rows: 3,
+  //   },
+  //   fieldName: 'reproduceSteps',
+  //   formItemClass: 'col-span-2',
+  //   label: '复现步骤',
+  // },
   {
-    component: 'Textarea',
-    componentProps: {
-      rows: 3,
-    },
+    component: markRaw(RichText),  // 使用富文本组件
     fieldName: 'reproduceSteps',
     formItemClass: 'col-span-2',
     label: '复现步骤',
+    defaultValue: '', // ✅ 强烈建议
+    componentProps: {
+      options: {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image'],
+          ],
+        },
+      },
+    },
   },
-
-
   {
     component: 'Textarea',
     componentProps: {

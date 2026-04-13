@@ -11,6 +11,8 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { DictEnum } from '@vben/constants';
+import { renderDict } from '#/utils/render';
 import {
   getBugList,
   delBug,
@@ -18,16 +20,17 @@ import {
   handleBugExport,
   handleChangeStatus,
 } from '#/api/requirement/bug';
+import { userList } from '#/api/system/user';
 import { TableSwitch } from '#/components/table';
 import { commonDownloadExcel } from '#/utils/file/download';
 import infoModal from './info-modal.vue';
 import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
-import { ref, onMounted } from 'vue';
-
+import { ref, onBeforeMount } from 'vue';
+const isReady = ref(false);
 const projectOptions = ref<{ label: string; value: string | number }[]>([]);
-
+const userOptions = ref<{ label: string; value: string | number }[]>([]);
 const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 80,
@@ -90,11 +93,17 @@ const [InfoModal, modalApi] = useVbenModal({
   connectedComponent: infoModal,
 });
 
-function handleAdd() {
+async function handleAdd() {
   console.log('Passing projectOptions:', projectOptions.value);
+  await fetchProjectList();
+  await fetchUserList();
   drawerApi.setData({
     projectOptions: projectOptions.value,
-    formData: {},
+    userOptions: userOptions.value,
+    formData: {
+      reproduceSteps: '',
+      status: 'open',
+    },
   });
   // drawerApi.setData({});
   drawerApi.open();
@@ -137,18 +146,6 @@ function handleMultiDelete() {
   });
 }
 
-async function handleRefresh(row: McpMarket) {
-  try {
-    const result = await mcpMarketRefresh(row.id);
-    message.success(
-      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`,
-    );
-    await tableApi.query();
-  } catch (error) {
-    message.error('刷新失败');
-  }
-}
-
 function handleDownloadExcel() {
   commonDownloadExcel(handleBugExport, '项目Bug', tableApi.formApi.form.values);
 }
@@ -159,10 +156,30 @@ function handleInfo(row: McpMarket) {
 
 const { hasAccessByCodes } = useAccess();
 
-onMounted(() => {
-  fetchProjectList();
+onBeforeMount(async () => {
+  await fetchProjectList();
+  await fetchUserList();
+  isReady.value = true;
 });
+async function fetchUserList() {
+  try {
+    const res = await userList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
 
+    console.log('eeeeeeeeee');
+    const users = res?.rows || res || [];
+    userOptions.value = users.map((pro: any) => ({
+      label: pro.userName, // Adjust field names based on API
+      value: pro.userId,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
 async function fetchProjectList() {
   try {
     const res = await getProjectList({
@@ -186,13 +203,10 @@ async function fetchProjectList() {
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="需求项列表">
+    <BasicTable table-title="bug列表" v-if="isReady">
       <template #toolbar-tools>
         <Space>
-          <a-button
-            v-access:code="['mcp:market:export']"
-            @click="handleDownloadExcel"
-          >
+          <a-button v-access:code="['mcp:market:export']" @click="handleDownloadExcel">
             {{ $t('pages.common.export') }}
           </a-button>
           <a-button
@@ -204,11 +218,7 @@ async function fetchProjectList() {
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['mcp:market:add']"
-            @click="handleAdd"
-          >
+          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -223,18 +233,19 @@ async function fetchProjectList() {
           @reload="tableApi.query()"
         />
       </template>
-      <!-- <template #status="{ row }">
-        <a-tag :color="row.status == '1' ? 'green' : 'red'">
-          {{ row.status == '1' ? '是' : '否' }}
-        </a-tag>
-      </template> -->
+      <template #severity="{ row }">
+        <component :is="renderDict(row.severity, DictEnum.BUG_SEVERITY)" />
+      </template>
+      <template #assignee="{ row }">
+        {{ (userOptions.value || []).find((user) => user.value === row.assigneeId)?.label || '-' }}
+      </template>
+      <template #owner="{ row }">
+        {{ (userOptions.value || []).find((user) => user.value === row.ownerId)?.label || '-' }}
+      </template>
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button
-            v-access:code="['agent:market:edit']"
-            @click.stop="handleEdit(row)"
-          >
+          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -243,11 +254,7 @@ async function fetchProjectList() {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button
-              danger
-              v-access:code="['agent:market:remove']"
-              @click.stop=""
-            >
+            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>

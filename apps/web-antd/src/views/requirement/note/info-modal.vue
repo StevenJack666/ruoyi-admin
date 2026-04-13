@@ -62,32 +62,6 @@ async function handleOpenChange(open: boolean) {
 
   modalApi.modalLoading(false);
 }
-
-const mixInfo = computed(() => {
-  if (!currentUser.value) {
-    return '-';
-  }
-  const { deptName, nickName, userName } = currentUser.value;
-  return `${userName} / ${nickName} / ${deptName ?? '-'}`;
-});
-
-const diffLoginTime = computed(() => {
-  if (!currentUser.value) {
-    return '-';
-  }
-  const { loginDate } = currentUser.value;
-  // 默认en显示
-  dayjs.locale('zh-cn');
-  // 计算相差秒数
-  const diffSeconds = dayjs().diff(dayjs(loginDate), 'second');
-  /**
-   * 转为时间显示(x月 x天)
-   * https://dayjs.fenxianglu.cn/category/duration.html#%E4%BA%BA%E6%80%A7%E5%8C%96
-   *
-   */
-  const diffText = dayjs.duration(diffSeconds, 'seconds').humanize();
-  return diffText;
-});
 </script>
 
 <template>

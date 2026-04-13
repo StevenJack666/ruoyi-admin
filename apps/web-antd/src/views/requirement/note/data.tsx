@@ -1,6 +1,7 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import RichText from '#/components/RichText/index.vue';
+import { markRaw } from 'vue';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -68,10 +69,11 @@ export const drawerSchema: FormSchemaGetter = () => [
   //   label: 'content',
   // },
   {
-    component: RichText, // 使用富文本组件
+    component: markRaw(RichText),  // 使用富文本组件
     fieldName: 'content',
     formItemClass: 'col-span-2',
     label: 'content',
+    defaultValue: '', // ✅ 强烈建议
     componentProps: {
       options: {
         theme: 'snow',

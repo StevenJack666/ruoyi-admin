@@ -5,10 +5,10 @@ import { requestClient } from '#/api/request';
 import { commonExport } from '#/api/helper';
 enum Api {
   root = '/requirement/bug',
-  itemList = '/requirement/bug/list',
+  bugList = '/requirement/bug/list',
   projectList = '/requirement/project/list',
   itemExport = '/requirement/bug/export',
-  changeStatus='/requirement/bug/changeStatus'
+  changeStatus = '/requirement/bug/changeStatus'
 }
 /**
  * 查询市场分页列表
@@ -16,7 +16,7 @@ enum Api {
  * @returns 列表
  */
 export function getBugList(params?: PageQuery) {
-  return requestClient.get<PageResult<Bug>>(Api.itemList, { params });
+  return requestClient.get<PageResult<Bug>>(Api.bugList, { params });
 }
 
 export function getProjectList(params?: PageQuery) {

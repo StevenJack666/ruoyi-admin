@@ -16,7 +16,9 @@ export const DictEnum = {
   SYS_MODEL_BILLING: 'sys_model_billing', // 计费方式
   CHAT_MODEL_CATEGORY: 'chat_model_category', // 模型分类
   REQUIREMENT_ITEM_STATUS: 'requirement_item_status',
-  REQUIREMENT_BUG_STATUS: 'requirement_bug_status'
+  REQUIREMENT_BUG_STATUS: 'requirement_bug_status',
+  BUG_PRIORITY: 'bug_priority',
+  BUG_SEVERITY: 'bug_severity',
 
 } as const;
 

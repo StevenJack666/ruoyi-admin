@@ -13,6 +13,7 @@ import { drawerSchema } from './data';
 import { message } from 'ant-design-vue';
 
 const localToolOptions = ref<{ label: string; value: string | number }[]>([]);
+const localUserOptions = ref<{ label: string; value: string | number }[]>([]);
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
@@ -33,13 +34,18 @@ const [BasicForm, formApi] = useVbenForm({
     const schema = drawerSchema();
 
     // Find and update toolConfig field with dynamic options
-    const projectConfigField = schema.find(
-      (item) => item.fieldName === 'projectId',
-    );
+    const projectConfigField = schema.find((item) => item.fieldName === 'projectId');
     if (projectConfigField) {
       projectConfigField.componentProps = {
         ...projectConfigField.componentProps,
         options: localToolOptions.value,
+      };
+    }
+    const userConfigField = schema.find((item) => item.fieldName === 'assigneeId');
+    if (userConfigField) {
+      userConfigField.componentProps = {
+        ...userConfigField.componentProps,
+        options: localUserOptions.value,
       };
     }
 
@@ -49,12 +55,10 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-2 gap-x-4',
 });
 
-const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
-  {
-    initializedGetter: defaultFormValueGetter(formApi),
-    currentGetter: defaultFormValueGetter(formApi),
-  },
-);
+const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff({
+  initializedGetter: defaultFormValueGetter(formApi),
+  currentGetter: defaultFormValueGetter(formApi),
+});
 
 const [BasicDrawer, drawerApi] = useVbenDrawer({
   onBeforeClose,
@@ -68,12 +72,17 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
 
     const data = drawerApi.getData() as {
       id?: number | string;
+      userOptions?: { label: string; value: string | number }[];
       projectOptions?: { label: string; value: string | number }[];
       formData?: Record<string, any>;
     };
     if (data?.projectOptions && data.projectOptions.length > 0) {
       localToolOptions.value = data.projectOptions;
       console.log('工具选项已加载:', localToolOptions.value);
+    }
+    if (data?.userOptions && data.userOptions.length > 0) {
+      localUserOptions.value = data.userOptions;
+      console.log('用户选项已加载:', localUserOptions.value);
     }
 
     // const { id } = drawerApi.getData() as { id?: number | string };

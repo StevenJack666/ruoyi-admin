@@ -88,7 +88,9 @@ function handleAdd() {
   console.log('Passing toolOptions:', toolOptions.value);
   drawerApi.setData({
     toolOptions: toolOptions.value,
-    formData: {},
+    formData: {
+      content:''
+    },
   });
   // drawerApi.setData({});
   drawerApi.open();

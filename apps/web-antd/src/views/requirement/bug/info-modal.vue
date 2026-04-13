@@ -9,7 +9,6 @@ import { ref } from 'vue';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Descriptions, DescriptionsItem, Tag } from 'ant-design-vue';
 
 import { findUserInfo } from '#/api/system/user';
 import { renderDict } from '#/utils/render';
@@ -100,10 +99,10 @@ const diffLoginTime = computed(() => {
         {{ currentData.title || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="严重程度">
-        {{ currentData.severity || '-' }}
+        <component :is="renderDict(currentData.severity, DictEnum.BUG_SEVERITY)" />
       </DescriptionsItem>
       <DescriptionsItem label="优先级">
-        {{ currentData.priority || '-' }}
+        <component :is="renderDict(currentData.priority, DictEnum.BUG_PRIORITY)" />
       </DescriptionsItem>
       <DescriptionsItem label="发现版本">
         {{ currentData.foundVersion || '-' }}
@@ -121,9 +120,7 @@ const diffLoginTime = computed(() => {
         {{ currentData.actualResult || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="状态">
-        <component
-          :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)"
-        />
+        <component :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)" />
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}

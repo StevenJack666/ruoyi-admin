@@ -5,12 +5,12 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'projectCode',
-    label: 'projectCode',
+    label: '项目编码',
   },
   {
     component: 'Input',
     fieldName: 'projectName',
-    label: 'projectName',
+    label: '项目名称',
   }
   // {
   //   component: 'Select',
@@ -51,13 +51,13 @@ export const columns: VxeGridProps['columns'] = [
     visible: false,
   },
   {
-    title: 'projectCode',
+    title: '项目编码',
     field: 'projectCode',
     showOverflow: true,
     // width: 200,
   },
   {
-    title: 'projectName',
+    title: '项目名称',
     field: 'projectName',
     showOverflow: true,
     // width: 200,
@@ -99,14 +99,14 @@ export const drawerSchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'projectCode',
-    label: 'projectCode',
+    label: '项目编码',
     rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'projectName',
-    label: 'projectName',
+    label: '项目名称',
     rules: 'required',
     formItemClass: 'col-span-2',
   },

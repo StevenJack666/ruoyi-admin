@@ -91,6 +91,7 @@ const [InfoModal, modalApi] = useVbenModal({
 });
 
 function handleAdd() {
+  fetchProjectList();
   console.log('Passing projectOptions:', projectOptions.value);
   drawerApi.setData({
     projectOptions: projectOptions.value,
@@ -101,6 +102,7 @@ function handleAdd() {
 }
 
 async function handleEdit(record: McpMarket) {
+  fetchProjectList();
   console.log('record.id:', record.id);
   drawerApi.setData({
     id: record.id,
@@ -141,7 +143,7 @@ async function handleRefresh(row: McpMarket) {
   try {
     const result = await mcpMarketRefresh(row.id);
     message.success(
-      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`,
+      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`
     );
     await tableApi.query();
   } catch (error) {
@@ -190,10 +192,7 @@ async function fetchProjectList() {
     <BasicTable table-title="需求项列表">
       <template #toolbar-tools>
         <Space>
-          <a-button
-            v-access:code="['mcp:market:export']"
-            @click="handleDownloadExcel"
-          >
+          <a-button v-access:code="['mcp:market:export']" @click="handleDownloadExcel">
             {{ $t('pages.common.export') }}
           </a-button>
           <a-button
@@ -205,11 +204,7 @@ async function fetchProjectList() {
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['mcp:market:add']"
-            @click="handleAdd"
-          >
+          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -232,10 +227,7 @@ async function fetchProjectList() {
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button
-            v-access:code="['agent:market:edit']"
-            @click.stop="handleEdit(row)"
-          >
+          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -244,11 +236,7 @@ async function fetchProjectList() {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button
-              danger
-              v-access:code="['agent:market:remove']"
-              @click.stop=""
-            >
+            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>
