@@ -24,10 +24,14 @@ import infoModal from './info-modal.vue';
 import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeMount } from 'vue';
+import { useRoute } from 'vue-router';
+import { userList } from '#/api/system/user';
 
+const route = useRoute();
+const projectId = route.query.projectId;
 const projectOptions = ref<{ label: string; value: string | number }[]>([]);
-
+const userOptions = ref<{ label: string; value: string | number }[]>([]);
 const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 80,
@@ -161,8 +165,27 @@ function handleInfo(row: McpMarket) {
 
 const { hasAccessByCodes } = useAccess();
 
-onMounted(() => {
-  fetchProjectList();
+onBeforeMount(async () => {
+  console.log('projectId from route query:', projectId);
+  await fetchProjectList();
+  await fetchUserList();
+  tableApi.formApi.updateSchema([
+    {
+      fieldName: 'projectId',
+      componentProps: {
+        options: projectOptions.value,
+      },
+      defaultValue: projectId,
+    },
+  ]);
+
+  if (projectId) {
+    tableApi.query({
+      projectId,
+    });
+  }else{
+    tableApi.query();
+  }
 });
 
 async function fetchProjectList() {
@@ -179,6 +202,26 @@ async function fetchProjectList() {
     projectOptions.value = projects.map((pro: any) => ({
       label: pro.projectName, // Adjust field names based on API
       value: pro.id,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
+
+async function fetchUserList() {
+  try {
+    const res = await userList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
+
+    console.log('eeeeeeeeee');
+    const users = res?.rows || res || [];
+    userOptions.value = users.map((pro: any) => ({
+      label: pro.userName, // Adjust field names based on API
+      value: pro.userId,
     }));
   } catch (error) {
     console.error('Fetch tool list failed:', error);
@@ -224,6 +267,14 @@ async function fetchProjectList() {
           {{ row.status == '1' ? '是' : '否' }}
         </a-tag>
       </template> -->
+      <template #projectName="{ row }">
+        {{
+          (projectOptions || []).find((project) => project.value === row.projectId)?.label || '-'
+        }}
+      </template>
+      <template #createBy="{ row }">
+        {{ (userOptions || []).find((user) => user.value === row.createBy)?.label || '-' }}
+      </template>
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>

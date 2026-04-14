@@ -30,14 +30,25 @@ export const columns: VxeGridProps['columns'] = [
     showOverflow: true,
     // width: 200,
   },
-
+  {
+    title: '创建人',
+    field: 'createBy',
+    slots: {
+      default: 'createBy',
+    },
+  },
+  {
+    title: '创建时间',
+    field: 'createTime',
+    showOverflow: true,
+  },
   {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
     resizable: false,
-    // width: 'auto',
+    width: 'auto',
   },
 ];
 

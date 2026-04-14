@@ -9,6 +9,7 @@ import { ref } from 'vue';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Descriptions, DescriptionsItem, Tag } from 'ant-design-vue';
 
 import { findUserInfo } from '#/api/system/user';
 import { renderDict } from '#/utils/render';
@@ -30,6 +31,8 @@ interface UserWithNames extends User {
 const currentUser = shallowRef<null | UserWithNames>(null);
 
 const currentData = ref({});
+const projectOptions = ref<{ label: string; value: string | number }[]>([]);
+const userOptions = ref<{ label: string; value: string | number }[]>([]);
 
 async function handleOpenChange(open: boolean) {
   if (!open) {
@@ -37,6 +40,8 @@ async function handleOpenChange(open: boolean) {
   }
   // modalApi.modalLoading(true);
   currentData.value = modalApi.getData().row;
+  projectOptions.value = modalApi.getData().projectOptions || [];
+  userOptions.value = modalApi.getData().userOptions || [];
   console.log('modalApi.getData()', modalApi.getData(), currentData.value);
   return;
 
@@ -92,11 +97,17 @@ const diffLoginTime = computed(() => {
 <template>
   <BasicModal :footer="false" :fullscreen-button="false" title="详情">
     <Descriptions v-if="currentData" size="small" :column="1" bordered>
-      <DescriptionsItem label="Bug编码">
+      <!-- <DescriptionsItem label="Bug编码">
         {{ currentData.bugCode || '-' }}
-      </DescriptionsItem>
+      </DescriptionsItem> -->
       <DescriptionsItem label="标题">
         {{ currentData.title || '-' }}
+      </DescriptionsItem>
+      <DescriptionsItem label="所属项目">
+        {{
+          (projectOptions || []).find((project) => project.value === currentData.projectId)
+            ?.label || '-'
+        }}
       </DescriptionsItem>
       <DescriptionsItem label="严重程度">
         <component :is="renderDict(currentData.severity, DictEnum.BUG_SEVERITY)" />
@@ -104,15 +115,23 @@ const diffLoginTime = computed(() => {
       <DescriptionsItem label="优先级">
         <component :is="renderDict(currentData.priority, DictEnum.BUG_PRIORITY)" />
       </DescriptionsItem>
+      <DescriptionsItem label="负责人">
+        {{
+          (userOptions || []).find((user) => user.value === currentData.assigneeId)?.label || '-'
+        }}
+      </DescriptionsItem>
+      <DescriptionsItem label="创建人">
+        {{ (userOptions || []).find((user) => user.value === currentData.ownerId)?.label || '-' }}
+      </DescriptionsItem>
       <DescriptionsItem label="发现版本">
         {{ currentData.foundVersion || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="修复版本">
         {{ currentData.fixedVersion || '-' }}
       </DescriptionsItem>
-      <DescriptionsItem label="复现步骤">
+      <!-- <DescriptionsItem label="复现步骤">
         {{ currentData.reproduceSteps || '-' }}
-      </DescriptionsItem>
+      </DescriptionsItem> -->
       <DescriptionsItem label="预期结果">
         {{ currentData.expectedResult || '-' }}
       </DescriptionsItem>

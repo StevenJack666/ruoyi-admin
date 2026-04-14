@@ -12,6 +12,7 @@ import { Modal, Popconfirm, Space, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { DictEnum } from '@vben/constants';
+import { cloneDeep } from 'lodash-es';
 import { renderDict } from '#/utils/render';
 import {
   getBugList,
@@ -28,6 +29,11 @@ import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
 import { ref, onBeforeMount } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const projectId = route.query.projectId;
+const dynamicQuerySchema = ref([]);
 const isReady = ref(false);
 const projectOptions = ref<{ label: string; value: string | number }[]>([]);
 const userOptions = ref<{ label: string; value: string | number }[]>([]);
@@ -38,7 +44,7 @@ const formOptions: VbenFormProps = {
       allowClear: true,
     },
   },
-  schema: querySchema(),
+  schema: dynamicQuerySchema,
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
 };
 
@@ -150,7 +156,7 @@ function handleDownloadExcel() {
   commonDownloadExcel(handleBugExport, '项目Bug', tableApi.formApi.form.values);
 }
 function handleInfo(row: McpMarket) {
-  modalApi.setData({ row });
+  modalApi.setData({ row, projectOptions: projectOptions.value, userOptions: userOptions.value });
   modalApi.open();
 }
 
@@ -160,6 +166,19 @@ onBeforeMount(async () => {
   await fetchProjectList();
   await fetchUserList();
   isReady.value = true;
+  // 深拷贝 schema
+  const schema = cloneDeep(querySchema());
+
+  // 注入 options
+  const projectField = schema.find((item) => item.fieldName === 'projectId');
+  if (projectField) {
+    projectField.componentProps.options = projectOptions.value;
+    if (projectId) {
+      projectField.defaultValue = projectId;
+    }
+  }
+  console.log('schema', schema, projectOptions.value);
+  dynamicQuerySchema.value = schema;
 });
 async function fetchUserList() {
   try {
@@ -185,6 +204,7 @@ async function fetchProjectList() {
     const res = await getProjectList({
       pageSize: 100,
       pageNum: 1,
+      status: '1',
     });
     // Adjust based on your actual API response structure
 
@@ -236,11 +256,17 @@ async function fetchProjectList() {
       <template #severity="{ row }">
         <component :is="renderDict(row.severity, DictEnum.BUG_SEVERITY)" />
       </template>
+
+      <template #projectName="{ row }">
+        {{
+          (projectOptions || []).find((project) => project.value === row.projectId)?.label || '-'
+        }}
+      </template>
       <template #assignee="{ row }">
-        {{ (userOptions.value || []).find((user) => user.value === row.assigneeId)?.label || '-' }}
+        {{ (userOptions || []).find((user) => user.value === row.assigneeId)?.label || '-' }}
       </template>
       <template #owner="{ row }">
-        {{ (userOptions.value || []).find((user) => user.value === row.ownerId)?.label || '-' }}
+        {{ (userOptions || []).find((user) => user.value === row.ownerId)?.label || '-' }}
       </template>
       <template #action="{ row }">
         <Space>

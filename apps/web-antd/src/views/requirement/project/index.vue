@@ -18,10 +18,13 @@ import infoModal from './info-modal.vue';
 import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
+import { userList } from '#/api/system/user';
+const router = useRouter();
 
 const toolOptions = ref<{ label: string; value: string | number }[]>([]);
-
+const userOptions = ref<{ label: string; value: string | number }[]>([]);
 const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 80,
@@ -135,7 +138,7 @@ async function handleRefresh(row: McpMarket) {
   try {
     const result = await mcpMarketRefresh(row.id);
     message.success(
-      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`,
+      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`
     );
     await tableApi.query();
   } catch (error) {
@@ -150,16 +153,53 @@ async function handleRefresh(row: McpMarket) {
 //     tableApi.formApi.form.values,
 //   );
 // }
+
 function handleInfo(row: McpMarket) {
   modalApi.setData({ row });
   modalApi.open();
 }
 
+function handleViewContrItem(row: McpMarket) {
+  // 假设需求项菜单路由为 '/requirement/contrItem'，携带项目id参数
+  router.push({
+    path: '/requirement/item',
+    query: { projectId: row.id },
+  });
+}
+
+function handleViewBug(row: McpMarket) {
+  // 假设需求项菜单路由为 '/requirement/bug'，携带项目id参数
+  router.push({
+    path: '/requirement/bug',
+    query: { projectId: row.id },
+  });
+}
+
 const { hasAccessByCodes } = useAccess();
 
-onMounted(() => {
-  // fetchToolList();
+onBeforeMount(async () => {
+  await fetchUserList();
 });
+
+async function fetchUserList() {
+  try {
+    const res = await userList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
+
+    console.log('eeeeeeeeee');
+    const users = res?.rows || res || [];
+    userOptions.value = users.map((pro: any) => ({
+      label: pro.userName, // Adjust field names based on API
+      value: pro.userId,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
 </script>
 
 <template>
@@ -182,11 +222,7 @@ onMounted(() => {
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['mcp:market:add']"
-            @click="handleAdd"
-          >
+          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -204,13 +240,19 @@ onMounted(() => {
           {{ row.status == '1' ? '启用' : '停用' }}
         </a-tag>
       </template>
+      <template #createBy="{ row }">
+         {{ (userOptions || []).find((user) => user.value === row.createBy)?.label || '-' }}
+      </template>
       <template #action="{ row }">
         <Space>
+          <ghost-button v-if="row.status == 1" @click.stop="handleViewContrItem(row)">
+            查看需求项
+          </ghost-button>
+          <ghost-button v-if="row.status == 1" @click.stop="handleViewBug(row)">
+            查看bug
+          </ghost-button>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button
-            v-access:code="['agent:market:edit']"
-            @click.stop="handleEdit(row)"
-          >
+          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -219,11 +261,7 @@ onMounted(() => {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button
-              danger
-              v-access:code="['agent:market:remove']"
-              @click.stop=""
-            >
+            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>

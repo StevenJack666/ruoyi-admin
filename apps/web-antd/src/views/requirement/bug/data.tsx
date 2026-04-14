@@ -6,33 +6,18 @@ import RichText from '#/components/RichText/index.vue';
 import { markRaw } from 'vue';
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
-    fieldName: 'bugCode',
-    label: 'Bug编码',
+    component: 'Select',
+    componentProps: {
+      options: [],
+    },
+    fieldName: 'projectId',
+    label: '所属项目',
   },
   {
     component: 'Input',
     fieldName: 'title',
     label: '标题',
-  }
-  // {
-  //   component: 'Select',
-  //   componentProps: {
-  //     options: [],
-  //   },
-  //   fieldName: 'skillConfig',
-  //   label: 'Skill配置',
-  // },
-  // {
-  //   component: 'Select',
-  //   componentProps: {
-  //     options: [],
-  //   },
-  //   fieldName: 'toolConfig',
-  //   label: '工具配置',
-  // },
-  ,
-
+  },
   {
     component: 'Select',
     componentProps: {
@@ -58,17 +43,26 @@ export const columns: VxeGridProps['columns'] = [
     // width: 80,
     visible: false,
   },
-  {
-    title: 'Bug编码',
-    field: 'bugCode',
-    showOverflow: true,
-    // width: 200,
-  },
+  // {
+  //   title: 'Bug编码',
+  //   field: 'bugCode',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
   {
     title: '标题',
     field: 'title',
     showOverflow: true,
     // width: 200,
+  },
+  {
+    title: '所属项目',
+    field: 'projectId',
+    showOverflow: true,
+    // width: 200,
+    slots: {
+      default: 'projectName',
+    },
   },
   {
     title: '严重程度',
@@ -116,12 +110,12 @@ export const columns: VxeGridProps['columns'] = [
     showOverflow: true,
     // width: 200,
   },
-  {
-    title: '复现步骤',
-    field: 'reproduceSteps',
-    showOverflow: true,
-    // width: 200,
-  },
+  // {
+  //   title: '复现步骤',
+  //   field: 'reproduceSteps',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
   {
     title: '预期结果',
     field: 'expectedResult',
@@ -149,12 +143,17 @@ export const columns: VxeGridProps['columns'] = [
     // width: 200,
   },
   {
+    title: '创建时间',
+    field: 'createTime',
+    showOverflow: true,
+  },
+  {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
     resizable: false,
-    // width: 'auto',
+    width: 'auto',
   },
 ];
 

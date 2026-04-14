@@ -18,8 +18,9 @@ import infoModal from './info-modal.vue';
 import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
-import { ref, onMounted } from 'vue';
-
+import { ref, onBeforeMount } from 'vue';
+import { userList } from '#/api/system/user';
+const userOptions = ref<{ label: string; value: string | number }[]>([]);
 const toolOptions = ref<{ label: string; value: string | number }[]>([]);
 
 const formOptions: VbenFormProps = {
@@ -89,7 +90,7 @@ function handleAdd() {
   drawerApi.setData({
     toolOptions: toolOptions.value,
     formData: {
-      content:''
+      content: '',
     },
   });
   // drawerApi.setData({});
@@ -137,7 +138,7 @@ async function handleRefresh(row: McpMarket) {
   try {
     const result = await mcpMarketRefresh(row.id);
     message.success(
-      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`,
+      `刷新成功，新增 ${result.addedCount} 个工具，更新 ${result.updatedCount} 个工具`
     );
     await tableApi.query();
   } catch (error) {
@@ -159,9 +160,29 @@ function handleInfo(row: McpMarket) {
 
 const { hasAccessByCodes } = useAccess();
 
-onMounted(() => {
-  // fetchToolList();
+onBeforeMount(async () => {
+  await fetchUserList();
 });
+
+async function fetchUserList() {
+  try {
+    const res = await userList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
+
+    console.log('eeeeeeeeee');
+    const users = res?.rows || res || [];
+    userOptions.value = users.map((pro: any) => ({
+      label: pro.userName, // Adjust field names based on API
+      value: pro.userId,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
 </script>
 
 <template>
@@ -184,11 +205,7 @@ onMounted(() => {
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['mcp:market:add']"
-            @click="handleAdd"
-          >
+          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -201,18 +218,14 @@ onMounted(() => {
           :unchecked-value="0"
         />
       </template> -->
-      <template #status="{ row }">
-        <a-tag :color="row.status == '1' ? 'green' : 'red'">
-          {{ row.status == '1' ? '是' : '否' }}
-        </a-tag>
+
+      <template #createBy="{ row }">
+        {{ (userOptions || []).find((user) => user.value === row.createBy)?.label || '-' }}
       </template>
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button
-            v-access:code="['agent:market:edit']"
-            @click.stop="handleEdit(row)"
-          >
+          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -221,11 +234,7 @@ onMounted(() => {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button
-              danger
-              v-access:code="['agent:market:remove']"
-              @click.stop=""
-            >
+            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>

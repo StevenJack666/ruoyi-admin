@@ -4,9 +4,12 @@ import { getDictOptions } from '#/utils/dict';
 import { DictEnum } from '@vben/constants';
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
-    fieldName: 'reqCode',
-    label: '需求编码',
+    component: 'Select',
+    componentProps: {
+      options: [],
+    },
+    fieldName: 'projectId',
+    label: '所属项目',
   },
   {
     component: 'Input',
@@ -66,6 +69,15 @@ export const columns: VxeGridProps['columns'] = [
     // width: 200,
   },
   {
+    title: '所属项目',
+    field: 'projectId',
+    showOverflow: true,
+    // width: 200,
+    slots: {
+      default: 'projectName',
+    },
+  },
+  {
     title: '类型',
     field: 'type',
     showOverflow: true,
@@ -105,12 +117,24 @@ export const columns: VxeGridProps['columns'] = [
   //   },
   // },
   {
+    title: '创建人',
+    field: 'createBy',
+    slots: {
+      default: 'createBy',
+    },
+  },
+  {
+    title: '创建时间',
+    field: 'createTime',
+    showOverflow: true,
+  },
+  {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
     resizable: false,
-    // width: 'auto',
+    width: 'auto',
   },
 ];
 
