@@ -29,7 +29,7 @@ const localRoutes: RouteRecordStringComponent[] = [
  * 这里放本地路由
  */
 export const localMenuList: RouteRecordStringComponent[] = [
-  {
+    {
     component: 'BasicLayout',
     meta: {
       order: -1,
@@ -39,29 +39,54 @@ export const localMenuList: RouteRecordStringComponent[] = [
     },
     name: 'Dashboard',
     path: '/',
-    redirect: '/analytics',
+    redirect: '/welcome',
     children: [
       {
-        name: 'Analytics',
-        path: '/analytics',
-        component: '/dashboard/analytics/index',
+        name: 'Welcome',
+        path: '/welcome',
+        component: '/welcome/index',
         meta: {
           icon: 'lucide:book-open-text',
           affixTab: true,
-          title: 'page.dashboard.analytics',
+          title: '欢迎',
         },
       },
-      {
-        name: 'Workspace',
-        path: '/workspace',
-        component: '/dashboard/workspace/index',
-        meta: {
-          icon: 'icon-park-outline:workbench',
-          title: 'page.dashboard.workspace',
-        },
-      },
+
     ],
   },
+  // {
+  //   component: 'BasicLayout',
+  //   meta: {
+  //     order: -1,
+  //     title: 'page.dashboard.title',
+  //     // 不使用基础布局（仅在顶级生效）
+  //     noBasicLayout: true,
+  //   },
+  //   name: 'Dashboard',
+  //   path: '/',
+  //   redirect: '/analytics',
+  //   children: [
+  //     {
+  //       name: 'Analytics',
+  //       path: '/analytics',
+  //       component: '/dashboard/analytics/index',
+  //       meta: {
+  //         icon: 'lucide:book-open-text',
+  //         affixTab: true,
+  //         title: 'page.dashboard.analytics',
+  //       },
+  //     },
+  //     {
+  //       name: 'Workspace',
+  //       path: '/workspace',
+  //       component: '/dashboard/workspace/index',
+  //       meta: {
+  //         icon: 'icon-park-outline:workbench',
+  //         title: 'page.dashboard.workspace',
+  //       },
+  //     },
+  //   ],
+  // },
   // {
   //   component: '/_core/about/index',
   //   meta: {

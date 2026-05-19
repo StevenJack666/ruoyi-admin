@@ -169,7 +169,7 @@ async function handleAccountLogin(values: LoginAndRegisterParams) {
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
     :show-register="false"
-    :show-third-party-login="true"
+    :show-third-party-login="false"
     @submit="handleAccountLogin"
   >
     <!-- 可通过show-third-party-login控制是否显示第三方登录 -->
