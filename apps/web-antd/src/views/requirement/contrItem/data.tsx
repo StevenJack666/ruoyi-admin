@@ -152,7 +152,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     fieldName: 'projectId',
     label: '项目Id',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
     componentProps: {
       options: [], // Will be populated dynamically
@@ -164,28 +164,28 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'reqCode',
     label: '需求编码',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'title',
     label: '标题',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'type',
     label: '类型',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'priority',
     label: '优先级',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
 
@@ -193,7 +193,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'source',
     label: '来源',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
@@ -210,7 +210,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     fieldName: 'status',
     label: '状态',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
     componentProps: {
       options: getDictOptions(DictEnum.REQUIREMENT_ITEM_STATUS),

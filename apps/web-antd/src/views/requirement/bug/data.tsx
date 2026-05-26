@@ -178,14 +178,14 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'title',
     label: '标题',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Select',
     fieldName: 'projectId',
     label: '项目Id',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
     componentProps: {
       options: [], // Will be populated dynamically
@@ -197,7 +197,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     fieldName: 'assigneeId',
     label: '负责人',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
     componentProps: {
       options: [], // Will be populated dynamically
@@ -293,7 +293,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     fieldName: 'status',
     label: '状态',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
     componentProps: {
       options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),

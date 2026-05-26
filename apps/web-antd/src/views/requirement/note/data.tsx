@@ -66,7 +66,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'title',
     label: 'title',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
 

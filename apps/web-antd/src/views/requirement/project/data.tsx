@@ -112,14 +112,14 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'projectCode',
     label: '项目编码',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
     component: 'Input',
     fieldName: 'projectName',
     label: '项目名称',
-    rules: 'required',
+    // rules: 'required',
     formItemClass: 'col-span-2',
   },
   {
@@ -133,7 +133,7 @@ export const drawerSchema: FormSchemaGetter = () => [
   },
   {
     component: 'RadioGroup',
-    rules: 'required',
+    // rules: 'required',
     componentProps: {
       buttonStyle: 'solid',
       options: [
