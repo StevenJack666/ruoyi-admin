@@ -17,6 +17,7 @@ const localUserOptions = ref<{ label: string; value: string | number }[]>([]);
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
+const isCopy = ref(false);
 const title = computed(() => {
   return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
 });
@@ -71,6 +72,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     drawerApi.drawerLoading(true);
 
     const data = drawerApi.getData() as {
+      isCopy?: boolean;
       id?: number | string;
       userOptions?: { label: string; value: string | number }[];
       projectOptions?: { label: string; value: string | number }[];
@@ -87,6 +89,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
 
     // const { id } = drawerApi.getData() as { id?: number | string };
     isUpdate.value = !!data?.id;
+    isCopy.value = !!data?.isCopy;
     if (isUpdate.value && data?.id) {
       try {
         const record = await bugInfo(data.id);
@@ -126,7 +129,18 @@ async function handleConfirm() {
     //     return;
     //   }
     // }
-    await (isUpdate.value ? editBug(data) : addBug(data));
+    const submitData = { ...data };
+
+    if (isCopy.value) {
+      delete submitData.id;
+    }
+
+    await (isUpdate.value
+      ? isCopy.value
+        ? addBug(submitData)
+        : editBug(submitData)
+      : addBug(submitData));
+
     resetInitialized();
     emit('reload');
     drawerApi.close();

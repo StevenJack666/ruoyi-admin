@@ -53,7 +53,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '标题',
     field: 'title',
     showOverflow: true,
-    // width: 200,
+    width: 600,
   },
   {
     title: '所属项目',
@@ -73,61 +73,61 @@ export const columns: VxeGridProps['columns'] = [
       default: 'severity',
     },
   },
-  {
-    title: '优先级',
-    field: 'priority',
-    showOverflow: true,
-    // width: 200,
-  },
-  {
-    title: '负责人',
-    field: 'assigneeId',
-    showOverflow: true,
-    // width: 200,
-    slots: {
-      default: 'assignee',
-    },
-  },
-  {
-    title: '创建人',
-    field: 'ownerId',
-    showOverflow: true,
-    // width: 200,
-    slots: {
-      default: 'owner',
-    },
-  },
+  // {
+  //   title: '优先级',
+  //   field: 'priority',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
+  // {
+  //   title: '负责人',
+  //   field: 'assigneeId',
+  //   showOverflow: true,
+  //   // width: 200,
+  //   slots: {
+  //     default: 'assignee',
+  //   },
+  // },
+  // {
+  //   title: '创建人',
+  //   field: 'ownerId',
+  //   showOverflow: true,
+  //   // width: 200,
+  //   slots: {
+  //     default: 'owner',
+  //   },
+  // },
 
-  {
-    title: '发现版本',
-    field: 'foundVersion',
-    showOverflow: true,
-    // width: 200,
-  },
-  {
-    title: '修复版本',
-    field: 'fixedVersion',
-    showOverflow: true,
-    // width: 200,
-  },
+  // {
+  //   title: '发现版本',
+  //   field: 'foundVersion',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
+  // {
+  //   title: '修复版本',
+  //   field: 'fixedVersion',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
   // {
   //   title: '复现步骤',
   //   field: 'reproduceSteps',
   //   showOverflow: true,
   //   // width: 200,
   // },
-  {
-    title: '预期结果',
-    field: 'expectedResult',
-    showOverflow: true,
-    // width: 200,
-  },
-  {
-    title: '实际结果',
-    field: 'actualResult',
-    showOverflow: true,
-    // width: 200,
-  },
+  // {
+  //   title: '预期结果',
+  //   field: 'expectedResult',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
+  // {
+  //   title: '实际结果',
+  //   field: 'actualResult',
+  //   showOverflow: true,
+  //   // width: 200,
+  // },
   // {
   //   title: '状态',
   //   field: 'status',
@@ -146,6 +146,20 @@ export const columns: VxeGridProps['columns'] = [
     title: '创建时间',
     field: 'createTime',
     showOverflow: true,
+    formatter: ({ cellValue }) => {
+      if (!cellValue) return '-';
+
+      const date = new Date(cellValue);
+
+      const yyyy = date.getFullYear();
+      const MM = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      const HH = String(date.getHours()).padStart(2, '0');
+      const mm = String(date.getMinutes()).padStart(2, '0');
+      const ss = String(date.getSeconds()).padStart(2, '0');
+
+      return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
+    },
   },
   {
     field: 'action',
@@ -193,18 +207,18 @@ export const drawerSchema: FormSchemaGetter = () => [
       //mode: 'multiple', // If multiple selection is needed
     },
   },
-  {
-    component: 'Select',
-    fieldName: 'assigneeId',
-    label: '负责人',
-    // rules: 'required',
-    formItemClass: 'col-span-2',
-    componentProps: {
-      options: [], // Will be populated dynamically
-      showSearch: true,
-      //mode: 'multiple', // If multiple selection is needed
-    },
-  },
+  // {
+  //   component: 'Select',
+  //   fieldName: 'assigneeId',
+  //   label: '负责人',
+  //   // rules: 'required',
+  //   formItemClass: 'col-span-2',
+  //   componentProps: {
+  //     options: [], // Will be populated dynamically
+  //     showSearch: true,
+  //     //mode: 'multiple', // If multiple selection is needed
+  //   },
+  // },
   {
     component: 'Select',
     fieldName: 'severity',
@@ -216,29 +230,29 @@ export const drawerSchema: FormSchemaGetter = () => [
       //mode: 'multiple', // If multiple selection is needed
     },
   },
-  {
-    component: 'Select',
-    fieldName: 'priority',
-    label: '优先级',
-    formItemClass: 'col-span-2',
-    componentProps: {
-      options: getDictOptions(DictEnum.BUG_PRIORITY),
-      showSearch: true,
-      //mode: 'multiple', // If multiple selection is needed
-    },
-  },
-  {
-    component: 'Input',
-    fieldName: 'foundVersion',
-    label: '发现版本',
-    formItemClass: 'col-span-2',
-  },
-  {
-    component: 'Input',
-    fieldName: 'fixedVersion',
-    label: '修复版本',
-    formItemClass: 'col-span-2',
-  },
+  // {
+  //   component: 'Select',
+  //   fieldName: 'priority',
+  //   label: '优先级',
+  //   formItemClass: 'col-span-2',
+  //   componentProps: {
+  //     options: getDictOptions(DictEnum.BUG_PRIORITY),
+  //     showSearch: true,
+  //     //mode: 'multiple', // If multiple selection is needed
+  //   },
+  // },
+  // {
+  //   component: 'Input',
+  //   fieldName: 'foundVersion',
+  //   label: '发现版本',
+  //   formItemClass: 'col-span-2',
+  // },
+  // {
+  //   component: 'Input',
+  //   fieldName: 'fixedVersion',
+  //   label: '修复版本',
+  //   formItemClass: 'col-span-2',
+  // },
   // {
   //   component: 'Textarea',
   //   componentProps: {
@@ -267,28 +281,28 @@ export const drawerSchema: FormSchemaGetter = () => [
       },
     },
   },
-  {
-    component: 'Textarea',
-    componentProps: {
-      rows: 3,
-      placeholder: '请输入',
-    },
-    // rules: 'required',
-    fieldName: 'expectedResult',
-    formItemClass: 'col-span-2',
-    label: '预期结果',
-  },
-  {
-    component: 'Textarea',
-    componentProps: {
-      rows: 3,
-      placeholder: '请输入',
-    },
-    // rules: 'required',
-    fieldName: 'actualResult',
-    formItemClass: 'col-span-2',
-    label: '实际结果',
-  },
+  // {
+  //   component: 'Textarea',
+  //   componentProps: {
+  //     rows: 3,
+  //     placeholder: '请输入',
+  //   },
+  //   // rules: 'required',
+  //   fieldName: 'expectedResult',
+  //   formItemClass: 'col-span-2',
+  //   label: '预期结果',
+  // },
+  // {
+  //   component: 'Textarea',
+  //   componentProps: {
+  //     rows: 3,
+  //     placeholder: '请输入',
+  //   },
+  //   // rules: 'required',
+  //   fieldName: 'actualResult',
+  //   formItemClass: 'col-span-2',
+  //   label: '实际结果',
+  // },
   {
     component: 'Select',
     fieldName: 'status',

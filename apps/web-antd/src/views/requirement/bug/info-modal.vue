@@ -112,7 +112,7 @@ const diffLoginTime = computed(() => {
       <DescriptionsItem label="严重程度">
         <component :is="renderDict(currentData.severity, DictEnum.BUG_SEVERITY)" />
       </DescriptionsItem>
-      <DescriptionsItem label="优先级">
+      <!-- <DescriptionsItem label="优先级">
         <component :is="renderDict(currentData.priority, DictEnum.BUG_PRIORITY)" />
       </DescriptionsItem>
       <DescriptionsItem label="负责人">
@@ -128,16 +128,16 @@ const diffLoginTime = computed(() => {
       </DescriptionsItem>
       <DescriptionsItem label="修复版本">
         {{ currentData.fixedVersion || '-' }}
-      </DescriptionsItem>
-      <!-- <DescriptionsItem label="复现步骤">
-        {{ currentData.reproduceSteps || '-' }}
       </DescriptionsItem> -->
-      <DescriptionsItem label="预期结果">
+      <DescriptionsItem label="复现步骤">
+        {{ currentData.reproduceSteps || '-' }}
+      </DescriptionsItem>
+      <!-- <DescriptionsItem label="预期结果">
         {{ currentData.expectedResult || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="实际结果">
         {{ currentData.actualResult || '-' }}
-      </DescriptionsItem>
+      </DescriptionsItem> -->
       <DescriptionsItem label="状态">
         <component :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)" />
       </DescriptionsItem>

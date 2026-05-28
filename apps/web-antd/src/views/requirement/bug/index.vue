@@ -133,6 +133,24 @@ async function handleEdit(record: McpMarket) {
   drawerApi.open();
 }
 
+function handleCopy(record: McpMarket) {
+  drawerApi.setData({
+    id: record.id,
+    isCopy: true,
+    projectOptions: projectOptions.value,
+    userOptions: userOptions.value,
+    formData: {
+      marketName: record.marketName + '-copy',
+      description: record.description,
+      skillIds: record?.skillIds,
+      toolIds: record?.toolIds,
+      configJson: record.configJson,
+      status: 'open', // 新复制的默认设置为未发布
+    },
+  });
+  drawerApi.open();
+}
+
 async function handleDelete(row: McpMarket) {
   await delBug([row.id]);
   await tableApi.query();
@@ -270,6 +288,7 @@ async function fetchProjectList() {
       </template>
       <template #action="{ row }">
         <Space>
+          <ghost-button @click.stop="handleCopy(row)"> 复制 </ghost-button>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
           <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
