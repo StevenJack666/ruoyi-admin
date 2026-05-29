@@ -21,7 +21,7 @@ import {
   handleBugExport,
   handleChangeStatus,
 } from '#/api/requirement/bug';
-import { userList } from '#/api/system/user';
+// import { userList } from '#/api/system/user';
 import { TableSwitch } from '#/components/table';
 import { commonDownloadExcel } from '#/utils/file/download';
 import infoModal from './info-modal.vue';
@@ -102,7 +102,7 @@ const [InfoModal, modalApi] = useVbenModal({
 async function handleAdd() {
   console.log('Passing projectOptions:', projectOptions.value);
   await fetchProjectList();
-  await fetchUserList();
+  // await fetchUserList();
   drawerApi.setData({
     projectOptions: projectOptions.value,
     userOptions: userOptions.value,
@@ -182,7 +182,7 @@ const { hasAccessByCodes } = useAccess();
 
 onBeforeMount(async () => {
   await fetchProjectList();
-  await fetchUserList();
+  // await fetchUserList();
   isReady.value = true;
   // 深拷贝 schema
   const schema = cloneDeep(querySchema());
@@ -198,25 +198,25 @@ onBeforeMount(async () => {
   console.log('schema', schema, projectOptions.value);
   dynamicQuerySchema.value = schema;
 });
-async function fetchUserList() {
-  try {
-    const res = await userList({
-      pageSize: 100,
-      pageNum: 1,
-    });
-    // Adjust based on your actual API response structure
+// async function fetchUserList() {
+//   try {
+//     const res = await userList({
+//       pageSize: 100,
+//       pageNum: 1,
+//     });
+//     // Adjust based on your actual API response structure
 
-    console.log('eeeeeeeeee');
-    const users = res?.rows || res || [];
-    userOptions.value = users.map((pro: any) => ({
-      label: pro.userName, // Adjust field names based on API
-      value: pro.userId,
-    }));
-  } catch (error) {
-    console.error('Fetch tool list failed:', error);
-    message.error('Failed to fetch tool list');
-  }
-}
+//     console.log('eeeeeeeeee');
+//     const users = res?.rows || res || [];
+//     userOptions.value = users.map((pro: any) => ({
+//       label: pro.userName, // Adjust field names based on API
+//       value: pro.userId,
+//     }));
+//   } catch (error) {
+//     console.error('Fetch tool list failed:', error);
+//     message.error('Failed to fetch tool list');
+//   }
+// }
 async function fetchProjectList() {
   try {
     const res = await getProjectList({
@@ -244,19 +244,19 @@ async function fetchProjectList() {
     <BasicTable table-title="bug列表" v-if="isReady">
       <template #toolbar-tools>
         <Space>
-          <a-button v-access:code="['mcp:market:export']" @click="handleDownloadExcel">
+          <a-button v-access:code="['requirement:bug:export']" @click="handleDownloadExcel">
             {{ $t('pages.common.export') }}
           </a-button>
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['mcp:market:remove']"
+            v-access:code="['requirement:bug:remove']"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
+          <a-button type="primary" v-access:code="['requirement:bug:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -290,7 +290,7 @@ async function fetchProjectList() {
         <Space>
           <ghost-button @click.stop="handleCopy(row)"> 复制 </ghost-button>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
+          <ghost-button v-access:code="['requirement:bug:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -299,7 +299,7 @@ async function fetchProjectList() {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
+            <ghost-button danger v-access:code="['requirement:bug:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>

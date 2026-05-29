@@ -19,7 +19,7 @@ import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
 import { ref, onBeforeMount } from 'vue';
-import { userList } from '#/api/system/user';
+// import { userList } from '#/api/system/user';
 const userOptions = ref<{ label: string; value: string | number }[]>([]);
 const toolOptions = ref<{ label: string; value: string | number }[]>([]);
 
@@ -161,28 +161,28 @@ function handleInfo(row: McpMarket) {
 const { hasAccessByCodes } = useAccess();
 
 onBeforeMount(async () => {
-  await fetchUserList();
+  // await fetchUserList();
 });
 
-async function fetchUserList() {
-  try {
-    const res = await userList({
-      pageSize: 100,
-      pageNum: 1,
-    });
-    // Adjust based on your actual API response structure
+// async function fetchUserList() {
+//   try {
+//     const res = await userList({
+//       pageSize: 100,
+//       pageNum: 1,
+//     });
+//     // Adjust based on your actual API response structure
 
-    console.log('eeeeeeeeee');
-    const users = res?.rows || res || [];
-    userOptions.value = users.map((pro: any) => ({
-      label: pro.userName, // Adjust field names based on API
-      value: pro.userId,
-    }));
-  } catch (error) {
-    console.error('Fetch tool list failed:', error);
-    message.error('Failed to fetch tool list');
-  }
-}
+//     console.log('eeeeeeeeee');
+//     const users = res?.rows || res || [];
+//     userOptions.value = users.map((pro: any) => ({
+//       label: pro.userName, // Adjust field names based on API
+//       value: pro.userId,
+//     }));
+//   } catch (error) {
+//     console.error('Fetch tool list failed:', error);
+//     message.error('Failed to fetch tool list');
+//   }
+// }
 </script>
 
 <template>
@@ -200,12 +200,12 @@ async function fetchUserList() {
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['mcp:market:remove']"
+            v-access:code="['requirement:note:remove']"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
+          <a-button type="primary" v-access:code="['requirement:note:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -225,7 +225,7 @@ async function fetchUserList() {
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
+          <ghost-button v-access:code="['requirement:note:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -234,7 +234,7 @@ async function fetchUserList() {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
+            <ghost-button danger v-access:code="['requirement:note:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>

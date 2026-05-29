@@ -24,11 +24,16 @@ import infoModal from './info-modal.vue';
 import marketDrawer from './market-drawer.vue';
 import { columns, querySchema } from './data';
 
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, reactive, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { userList } from '#/api/system/user';
+
+const projectIdFromRoute = ref<string | null>(null);
+// import { userList } from '#/api/system/user';
 
 const route = useRoute();
+const queryParams = reactive<{ projectId?: string }>({
+  projectId: route.query.projectId as string | undefined,
+});
 const projectId = route.query.projectId;
 const projectOptions = ref<{ label: string; value: string | number }[]>([]);
 const userOptions = ref<{ label: string; value: string | number }[]>([]);
@@ -53,11 +58,19 @@ const gridOptions: VxeGridProps = {
   keepSource: true,
   pagerConfig: {},
   proxyConfig: {
+    // enabled: false, // 禁止首次自动查询
     ajax: {
-      query: async ({ page }, formValues = {}) => {
+      query: async ({ page }) => {
+        // 手动获取 form 值
+        // const formValues = tableApi.formApi.form.values;
+        const formValues = await tableApi.formApi.getValues();
+
+        console.log('formValues', formValues, queryParams);
+
         return await getItemList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
+          ...queryParams,
           ...formValues,
         });
       },
@@ -84,6 +97,7 @@ const gridOptions: VxeGridProps = {
 const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
+  // immediate: false, // ✅ 禁止首次自动加载
 });
 
 const [MarketDrawer, drawerApi] = useVbenDrawer({
@@ -166,9 +180,14 @@ function handleInfo(row: McpMarket) {
 const { hasAccessByCodes } = useAccess();
 
 onBeforeMount(async () => {
-  console.log('projectId from route query:', projectId);
+  // console.log('projectId from route query:', projectId);
+
+  // 获取路由projectId
+  const projectId = route.query.projectId as string | undefined;
   await fetchProjectList();
-  await fetchUserList();
+  console.log('projectId from route query:', projectId);
+
+  // await fetchUserList();
   tableApi.formApi.updateSchema([
     {
       fieldName: 'projectId',
@@ -180,12 +199,24 @@ onBeforeMount(async () => {
   ]);
 
   if (projectId) {
-    tableApi.query({
-      projectId,
-    });
-  }else{
-    tableApi.query();
+    // 关键
+    // queryParams.value.projectId = projectId;
+    await tableApi.formApi.setValues({ projectId });
   }
+
+  console.log('Initial form values:', tableApi);
+  // 必须 nextTick
+  await nextTick();
+  // tableApi.query(tableApi.formApi.form.values);
+  // 最后手动触发
+  await tableApi.query();
+  // if (projectId) {
+  //   tableApi.query({
+  //     projectId,
+  //   });
+  // } else {
+  //   tableApi.query();
+  // }
 });
 
 async function fetchProjectList() {
@@ -209,25 +240,25 @@ async function fetchProjectList() {
   }
 }
 
-async function fetchUserList() {
-  try {
-    const res = await userList({
-      pageSize: 100,
-      pageNum: 1,
-    });
-    // Adjust based on your actual API response structure
+// async function fetchUserList() {
+//   try {
+//     const res = await userList({
+//       pageSize: 100,
+//       pageNum: 1,
+//     });
+//     // Adjust based on your actual API response structure
 
-    console.log('eeeeeeeeee');
-    const users = res?.rows || res || [];
-    userOptions.value = users.map((pro: any) => ({
-      label: pro.userName, // Adjust field names based on API
-      value: pro.userId,
-    }));
-  } catch (error) {
-    console.error('Fetch tool list failed:', error);
-    message.error('Failed to fetch tool list');
-  }
-}
+//     console.log('eeeeeeeeee');
+//     const users = res?.rows || res || [];
+//     userOptions.value = users.map((pro: any) => ({
+//       label: pro.userName, // Adjust field names based on API
+//       value: pro.userId,
+//     }));
+//   } catch (error) {
+//     console.error('Fetch tool list failed:', error);
+//     message.error('Failed to fetch tool list');
+//   }
+// }
 </script>
 
 <template>
@@ -235,19 +266,19 @@ async function fetchUserList() {
     <BasicTable table-title="需求项列表">
       <template #toolbar-tools>
         <Space>
-          <a-button v-access:code="['mcp:market:export']" @click="handleDownloadExcel">
+          <a-button v-access:code="['requirement:item:export']" @click="handleDownloadExcel">
             {{ $t('pages.common.export') }}
           </a-button>
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['mcp:market:remove']"
+            v-access:code="['requirement:item:remove']"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
           </a-button>
-          <a-button type="primary" v-access:code="['mcp:market:add']" @click="handleAdd">
+          <a-button type="primary" v-access:code="['requirement:item:add']" @click="handleAdd">
             {{ $t('pages.common.add') }}
           </a-button>
         </Space>
@@ -278,7 +309,7 @@ async function fetchUserList() {
       <template #action="{ row }">
         <Space>
           <ghost-button @click.stop="handleInfo(row)"> 详情 </ghost-button>
-          <ghost-button v-access:code="['agent:market:edit']" @click.stop="handleEdit(row)">
+          <ghost-button v-access:code="['requirement:item:edit']" @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <Popconfirm
@@ -287,7 +318,7 @@ async function fetchUserList() {
             title="确认删除？"
             @confirm="handleDelete(row)"
           >
-            <ghost-button danger v-access:code="['agent:market:remove']" @click.stop="">
+            <ghost-button danger v-access:code="['requirement:item:remove']" @click.stop="">
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>
