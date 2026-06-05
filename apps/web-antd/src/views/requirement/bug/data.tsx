@@ -19,13 +19,18 @@ export const querySchema: FormSchemaGetter = () => [
     label: '标题',
   },
   {
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),
-    },
+    component: 'Input',
     fieldName: 'status',
     label: '状态',
   },
+  // {
+  //   component: 'Select',
+  //   componentProps: {
+  //     options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),
+  //   },
+  //   fieldName: 'status',
+  //   label: '状态',
+  // },
 
 
   // {
@@ -69,9 +74,9 @@ export const columns: VxeGridProps['columns'] = [
     field: 'severity',
     showOverflow: true,
     // width: 200,
-    slots: {
-      default: 'severity',
-    },
+    // slots: {
+    //   default: 'severity',
+    // },
   },
   // {
   //   title: '优先级',
@@ -220,16 +225,23 @@ export const drawerSchema: FormSchemaGetter = () => [
   //   },
   // },
   {
-    component: 'Select',
+    component: 'Input',
     fieldName: 'severity',
     label: '严重程度',
+    // rules: 'required',
     formItemClass: 'col-span-2',
-    componentProps: {
-      options: getDictOptions(DictEnum.BUG_SEVERITY),
-      showSearch: true,
-      //mode: 'multiple', // If multiple selection is needed
-    },
   },
+  // {
+  //   component: 'Select',
+  //   fieldName: 'severity',
+  //   label: '严重程度',
+  //   formItemClass: 'col-span-2',
+  //   componentProps: {
+  //     options: getDictOptions(DictEnum.BUG_SEVERITY),
+  //     showSearch: true,
+  //     //mode: 'multiple', // If multiple selection is needed
+  //   },
+  // },
   // {
   //   component: 'Select',
   //   fieldName: 'priority',
@@ -304,15 +316,22 @@ export const drawerSchema: FormSchemaGetter = () => [
   //   label: '实际结果',
   // },
   {
-    component: 'Select',
+    component: 'Input',
     fieldName: 'status',
     label: '状态',
     // rules: 'required',
     formItemClass: 'col-span-2',
-    componentProps: {
-      options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),
-      showSearch: true,
-      //mode: 'multiple', // If multiple selection is needed
-    },
   },
+  // {
+  //   component: 'Select',
+  //   fieldName: 'status',
+  //   label: '状态',
+  //   // rules: 'required',
+  //   formItemClass: 'col-span-2',
+  //   componentProps: {
+  //     options: getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS),
+  //     showSearch: true,
+  //     //mode: 'multiple', // If multiple selection is needed
+  //   },
+  // },
 ];

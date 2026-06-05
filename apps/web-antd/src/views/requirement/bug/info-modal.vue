@@ -110,7 +110,8 @@ const diffLoginTime = computed(() => {
         }}
       </DescriptionsItem>
       <DescriptionsItem label="严重程度">
-        <component :is="renderDict(currentData.severity, DictEnum.BUG_SEVERITY)" />
+        {{ currentData.severity || '-' }}
+        <!-- <component :is="renderDict(currentData.severity, DictEnum.BUG_SEVERITY)" /> -->
       </DescriptionsItem>
       <!-- <DescriptionsItem label="优先级">
         <component :is="renderDict(currentData.priority, DictEnum.BUG_PRIORITY)" />
@@ -130,7 +131,9 @@ const diffLoginTime = computed(() => {
         {{ currentData.fixedVersion || '-' }}
       </DescriptionsItem> -->
       <DescriptionsItem label="复现步骤">
-        {{ currentData.reproduceSteps || '-' }}
+        <div v-if="currentData.reproduceSteps" v-html="currentData.reproduceSteps"></div>
+        <span v-else>-</span>
+        <!-- {{ currentData.reproduceSteps || '-' }} -->
       </DescriptionsItem>
       <!-- <DescriptionsItem label="预期结果">
         {{ currentData.expectedResult || '-' }}
@@ -139,7 +142,8 @@ const diffLoginTime = computed(() => {
         {{ currentData.actualResult || '-' }}
       </DescriptionsItem> -->
       <DescriptionsItem label="状态">
-        <component :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)" />
+        {{ currentData.status || '-' }}
+        <!-- <component :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)" /> -->
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}
