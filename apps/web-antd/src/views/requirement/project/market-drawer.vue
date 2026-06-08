@@ -13,6 +13,7 @@ import { drawerSchema } from './data';
 import { message } from 'ant-design-vue';
 
 const localToolOptions = ref<{ label: string; value: string | number }[]>([]);
+const localUserOptions = ref<{ label: string; value: string | number }[]>([]);
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
@@ -41,18 +42,24 @@ const [BasicForm, formApi] = useVbenForm({
       };
     }
 
+    const userConfigField = schema.find((item) => item.fieldName === 'ownerId');
+    if (userConfigField) {
+      userConfigField.componentProps = {
+        ...userConfigField.componentProps,
+        options: localUserOptions.value,
+      };
+    }
+
     return schema;
   }),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2 gap-x-4',
 });
 
-const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
-  {
-    initializedGetter: defaultFormValueGetter(formApi),
-    currentGetter: defaultFormValueGetter(formApi),
-  },
-);
+const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff({
+  initializedGetter: defaultFormValueGetter(formApi),
+  currentGetter: defaultFormValueGetter(formApi),
+});
 
 const [BasicDrawer, drawerApi] = useVbenDrawer({
   onBeforeClose,
@@ -68,10 +75,15 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       id?: number | string;
       toolOptions?: { label: string; value: string | number }[];
       formData?: Record<string, any>;
+      userOptions?: { label: string; value: string | number }[];
     };
     if (data?.toolOptions && data.toolOptions.length > 0) {
       localToolOptions.value = data.toolOptions;
       console.log('工具选项已加载:', localToolOptions.value);
+    }
+    if (data?.userOptions && data.userOptions.length > 0) {
+      localUserOptions.value = data.userOptions;
+      console.log('用户选项已加载:', localUserOptions.value);
     }
 
     // const { id } = drawerApi.getData() as { id?: number | string };

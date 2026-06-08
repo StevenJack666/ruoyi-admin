@@ -18,6 +18,7 @@ dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 const [BasicModal, modalApi] = useVbenModal({
+  class: 'w-[750px]',
   onOpenChange: handleOpenChange,
   onClosed() {
     currentUser.value = null;
@@ -110,18 +111,18 @@ const diffLoginTime = computed(() => {
         }}
       </DescriptionsItem>
       <DescriptionsItem label="严重程度">
-        {{ currentData.severity || '-' }}
-        <!-- <component :is="renderDict(currentData.severity, DictEnum.BUG_SEVERITY)" /> -->
+        <!-- {{ currentData.severity || '-' }} -->
+        <component :is="renderDict(currentData.severity, 'bug_severity')" />
       </DescriptionsItem>
       <!-- <DescriptionsItem label="优先级">
         <component :is="renderDict(currentData.priority, DictEnum.BUG_PRIORITY)" />
-      </DescriptionsItem>
+      </DescriptionsItem>-->
       <DescriptionsItem label="负责人">
         {{
           (userOptions || []).find((user) => user.value === currentData.assigneeId)?.label || '-'
         }}
       </DescriptionsItem>
-      <DescriptionsItem label="创建人">
+      <!--  <DescriptionsItem label="创建人">
         {{ (userOptions || []).find((user) => user.value === currentData.ownerId)?.label || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="发现版本">
@@ -142,8 +143,8 @@ const diffLoginTime = computed(() => {
         {{ currentData.actualResult || '-' }}
       </DescriptionsItem> -->
       <DescriptionsItem label="状态">
-        {{ currentData.status || '-' }}
-        <!-- <component :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)" /> -->
+        <!-- {{ currentData.status || '-' }} -->
+        <component :is="renderDict(currentData.status, DictEnum.REQUIREMENT_BUG_STATUS)" />
       </DescriptionsItem>
       <!-- <DescriptionsItem label="用户信息">
         {{ mixInfo }}
