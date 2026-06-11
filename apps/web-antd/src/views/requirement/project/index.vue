@@ -20,7 +20,7 @@ import { columns, querySchema } from './data';
 
 import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-// import { userList } from '#/api/system/user';
+import { userList } from '#/api/system/user';
 const router = useRouter();
 
 const toolOptions = ref<{ label: string; value: string | number }[]>([]);
@@ -91,6 +91,7 @@ function handleAdd() {
   console.log('Passing toolOptions:', toolOptions.value);
   drawerApi.setData({
     toolOptions: toolOptions.value,
+    userOptions: userOptions.value,
     formData: {},
   });
   // drawerApi.setData({});
@@ -102,6 +103,7 @@ async function handleEdit(record: McpMarket) {
   drawerApi.setData({
     id: record.id,
     toolOptions: toolOptions.value,
+    userOptions: userOptions.value ,
     formData: {
       id: record.id,
       marketName: record.marketName,
@@ -155,7 +157,7 @@ async function handleRefresh(row: McpMarket) {
 // }
 
 function handleInfo(row: McpMarket) {
-  modalApi.setData({ row });
+  modalApi.setData({ row ,userOptions: userOptions.value });
   modalApi.open();
 }
 
@@ -178,28 +180,28 @@ function handleViewBug(row: McpMarket) {
 const { hasAccessByCodes } = useAccess();
 
 onBeforeMount(async () => {
-  // await fetchUserList();
+  await fetchUserList();
 });
 
-// async function fetchUserList() {
-//   try {
-//     const res = await userList({
-//       pageSize: 100,
-//       pageNum: 1,
-//     });
-//     // Adjust based on your actual API response structure
+async function fetchUserList() {
+  try {
+    const res = await userList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
 
-//     console.log('eeeeeeeeee');
-//     const users = res?.rows || res || [];
-//     userOptions.value = users.map((pro: any) => ({
-//       label: pro.userName, // Adjust field names based on API
-//       value: pro.userId,
-//     }));
-//   } catch (error) {
-//     console.error('Fetch tool list failed:', error);
-//     message.error('Failed to fetch tool list');
-//   }
-// }
+    console.log('eeeeeeeeee');
+    const users = res?.rows || res || [];
+    userOptions.value = users.map((pro: any) => ({
+      label: pro.userName, // Adjust field names based on API
+      value: pro.userId,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
 </script>
 
 <template>
@@ -239,6 +241,9 @@ onBeforeMount(async () => {
         <a-tag :color="row.status == '1' ? 'green' : 'red'">
           {{ row.status == '1' ? '启用' : '停用' }}
         </a-tag>
+      </template>
+      <template #owner="{ row }">
+        {{ (userOptions || []).find((user) => user.value === row.ownerId)?.label || '-' }}
       </template>
       <template #createBy="{ row }">
         {{ (userOptions || []).find((user) => user.value === row.createBy)?.label || '-' }}

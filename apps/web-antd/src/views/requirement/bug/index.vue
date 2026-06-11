@@ -12,6 +12,7 @@ import { Modal, Popconfirm, Space, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { DictEnum } from '@vben/constants';
+import { getDictOptions } from '#/utils/dict';
 import { cloneDeep } from 'lodash-es';
 import { renderDict } from '#/utils/render';
 import {
@@ -21,7 +22,7 @@ import {
   handleBugExport,
   handleChangeStatus,
 } from '#/api/requirement/bug';
-// import { userList } from '#/api/system/user';
+import { userList } from '#/api/system/user';
 import { TableSwitch } from '#/components/table';
 import { commonDownloadExcel } from '#/utils/file/download';
 import infoModal from './info-modal.vue';
@@ -120,6 +121,7 @@ async function handleEdit(record: McpMarket) {
   drawerApi.setData({
     id: record.id,
     projectOptions: projectOptions.value,
+    userOptions: userOptions.value ,
     formData: {
       id: record.id,
       marketName: record.marketName,
@@ -182,7 +184,7 @@ const { hasAccessByCodes } = useAccess();
 
 onBeforeMount(async () => {
   await fetchProjectList();
-  // await fetchUserList();
+  await fetchUserList();
   isReady.value = true;
   // 深拷贝 schema
   const schema = cloneDeep(querySchema());
@@ -195,28 +197,40 @@ onBeforeMount(async () => {
       projectField.defaultValue = projectId;
     }
   }
+
+  const statusOptions = getDictOptions(DictEnum.REQUIREMENT_BUG_STATUS) || [];
+  const statusField = schema.find((item) => item.fieldName === 'status');
+  if (statusField) {
+    statusField.componentProps.options = statusOptions;
+  }
+
+  const assigneeField = schema.find((item) => item.fieldName === 'assigneeId');
+  if (assigneeField) {
+    assigneeField.componentProps.options = userOptions.value;
+  }
+
   console.log('schema', schema, projectOptions.value);
   dynamicQuerySchema.value = schema;
 });
-// async function fetchUserList() {
-//   try {
-//     const res = await userList({
-//       pageSize: 100,
-//       pageNum: 1,
-//     });
-//     // Adjust based on your actual API response structure
+async function fetchUserList() {
+  try {
+    const res = await userList({
+      pageSize: 100,
+      pageNum: 1,
+    });
+    // Adjust based on your actual API response structure
 
-//     console.log('eeeeeeeeee');
-//     const users = res?.rows || res || [];
-//     userOptions.value = users.map((pro: any) => ({
-//       label: pro.userName, // Adjust field names based on API
-//       value: pro.userId,
-//     }));
-//   } catch (error) {
-//     console.error('Fetch tool list failed:', error);
-//     message.error('Failed to fetch tool list');
-//   }
-// }
+    console.log('eeeeeeeeee');
+    const users = res?.rows || res || [];
+    userOptions.value = users.map((pro: any) => ({
+      label: pro.userName, // Adjust field names based on API
+      value: pro.userId,
+    }));
+  } catch (error) {
+    console.error('Fetch tool list failed:', error);
+    message.error('Failed to fetch tool list');
+  }
+}
 async function fetchProjectList() {
   try {
     const res = await getProjectList({
@@ -263,13 +277,14 @@ async function fetchProjectList() {
       </template>
 
       <template #status="{ row }">
-        <TableSwitch
+        <component :is="renderDict(row.status, DictEnum.REQUIREMENT_BUG_STATUS)" />
+        <!-- <TableSwitch
           v-model:value="row.status"
           :api="() => handleChangeStatus(row)"
           :checked-value="'1'"
           :unchecked-value="'0'"
           @reload="tableApi.query()"
-        />
+        /> -->
       </template>
       <template #severity="{ row }">
         <component :is="renderDict(row.severity, DictEnum.BUG_SEVERITY)" />

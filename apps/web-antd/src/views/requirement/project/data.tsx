@@ -76,13 +76,15 @@ export const columns: VxeGridProps['columns'] = [
       default: 'status',
     },
   },
-  // {
-  //   title: '创建人',
-  //   field: 'createBy',
-  //   slots: {
-  //     default: 'createBy',
-  //   },
-  // },
+  {
+    title: '归属人',
+    field: 'ownerId',
+    showOverflow: true,
+    // width: 200,
+    slots: {
+      default: 'owner',
+    },
+  },
   {
     title: '创建时间',
     field: 'createTime',
@@ -135,6 +137,18 @@ export const drawerSchema: FormSchemaGetter = () => [
     label: '项目名称',
     // rules: 'required',
     formItemClass: 'col-span-2',
+  },
+  {
+    component: 'Select',
+    fieldName: 'ownerId',
+    label: '归属人',
+    // rules: 'required',
+    formItemClass: 'col-span-2',
+    componentProps: {
+      options: [], // Will be populated dynamically
+      showSearch: true,
+      //mode: 'multiple', // If multiple selection is needed
+    },
   },
   {
     component: 'Textarea',

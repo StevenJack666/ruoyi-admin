@@ -13,6 +13,7 @@ import { Descriptions, DescriptionsItem, Tag } from 'ant-design-vue';
 
 import { findUserInfo } from '#/api/system/user';
 import { renderDict } from '#/utils/render';
+const userOptions = ref<{ label: string; value: string | number }[]>([]);
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -38,6 +39,7 @@ async function handleOpenChange(open: boolean) {
   }
   // modalApi.modalLoading(true);
   currentData.value = modalApi.getData().row;
+  userOptions.value = modalApi.getData().userOptions || [];
   console.log('modalApi.getData()', modalApi.getData(), currentData.value);
   return;
 
@@ -98,6 +100,11 @@ const diffLoginTime = computed(() => {
       </DescriptionsItem>
       <DescriptionsItem label="projectName">
         {{ currentData.projectName || '-' }}
+      </DescriptionsItem>
+      <DescriptionsItem label="归属人">
+        {{
+          (userOptions || []).find((user) => user.value === currentData.ownerId)?.label || '-'
+        }}
       </DescriptionsItem>
       <DescriptionsItem label="描述">
         {{ currentData.description || '-' }}
