@@ -140,6 +140,7 @@ async function handleFragment(record: any) {
     const res = await fragmentList({
       attachId: record.id, // 或者其他关联字段
       pageSize: 100,
+      docId: record.docId, // 如果有文档ID，可以传递
     });
     fragmentData.value = res.rows || [];
     fragmentVisible.value = true;

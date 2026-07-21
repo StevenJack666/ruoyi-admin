@@ -25,6 +25,8 @@ import { pick } from 'lodash-es';
 
 import { infoAdd, infoInfo, infoUpdate } from '#/api/knowledge/info';
 import { embeddingModelList, rerankModelList } from '#/api/chat/model';
+import { getDictOptions } from '#/utils/dict';
+import { DictEnum } from '@vben/constants';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -40,6 +42,7 @@ const defaultValues: Partial<InfoForm> = {
   id: undefined,
   name: undefined,
   share: undefined,
+  enableHybrid: undefined,
   description: undefined,
   separator: undefined,
   overlapChar: undefined,
@@ -63,20 +66,24 @@ type AntdFormRules<T> = Partial<Record<keyof T, RuleObject[]>> & {
 const formRules = ref<AntdFormRules<InfoForm>>({
   name: [{ required: true, message: '知识库名称不能为空' }],
   share: [{ required: true, message: '请选择是否公开' }],
+  enableHybrid: [{ required: true, message: '请选择是否启用混合检索' }],
   vectorModel: [{ required: true, message: '请选择向量库' }],
   embeddingModel: [{ required: true, message: '请选择向量模型' }],
   retrieveLimit: [{ required: true, message: '知识库检索条数不能为空' }],
   textBlockSize: [{ required: true, message: '文本块大小不能为空' }],
   overlapChar: [{ required: true, message: '重叠字符数不能为空' }],
-  rerankModel: [{ required: true, message: '请选择重排序模型' }],
+  // rerankModel: [{ required: true, message: '请选择重排序模型' }],
   rerankTopN: [{ required: true, message: '重排序返回数量不能为空' }],
   rerankScoreThreshold: [{ required: true, message: '分数阈值不能为空' }],
 });
 
-const vectorModelOptions = [
-  { label: 'weaviate', value: 'weaviate' },
-  { label: 'milvus', value: 'milvus' },
-];
+// const vectorModelOptions = [
+//   { label: 'weaviate', value: 'weaviate' },
+//   { label: 'milvus', value: 'milvus' },
+// ];
+const vectorModelOptions = computed(() =>
+  getDictOptions(DictEnum.VECTOR_STORE),
+);
 
 const embeddingModelOptions = ref<Array<{ label: string; value: string }>>([]);
 
@@ -95,7 +102,9 @@ const { validate, validateInfos, resetFields } = Form.useForm(
 async function fetchEmbeddingModels() {
   try {
     const response = await embeddingModelList();
-    const models = Array.isArray(response) ? response : (response.rows || response.records || []);
+    const models = Array.isArray(response)
+      ? response
+      : response.rows || response.records || [];
     embeddingModelOptions.value = models.map((model: any) => ({
       label: model.modelDescribe,
       value: model.modelName,
@@ -108,7 +117,9 @@ async function fetchEmbeddingModels() {
 async function fetchRerankModels() {
   try {
     const response = await rerankModelList();
-    const models = Array.isArray(response) ? response : (response.rows || response.records || []);
+    const models = Array.isArray(response)
+      ? response
+      : response.rows || response.records || [];
     rerankModelOptions.value = models.map((model: any) => ({
       label: model.modelDescribe,
       value: model.modelName,
@@ -119,27 +130,45 @@ async function fetchRerankModels() {
 }
 
 // 监听检索条数变化，确保重排序返回数量不超过检索条数
-watch(() => formData.value.retrieveLimit, (newVal) => {
-  if (formData.value.rerankTopN && newVal && formData.value.rerankTopN > newVal) {
-    formData.value.rerankTopN = newVal;
-  }
-});
+watch(
+  () => formData.value.retrieveLimit,
+  (newVal) => {
+    if (
+      formData.value.rerankTopN &&
+      newVal &&
+      formData.value.rerankTopN > newVal
+    ) {
+      formData.value.rerankTopN = newVal;
+    }
+  },
+);
 
 // 监听启用重排序变化
-watch(() => formData.value.enableRerank, (newVal) => {
-  if (newVal === 1) {
-    // 启用重排序时，设置默认值
-    if (!formData.value.rerankModel && rerankModelOptions.value.length > 0) {
-      formData.value.rerankModel = rerankModelOptions.value[0].value;
+watch(
+  () => formData.value.enableRerank,
+  (newVal) => {
+    if (newVal === 1) {
+      formRules.value.rerankModel = [
+        { required: true, message: '请选择重排序模型' },
+      ];
+      // 启用重排序时，设置默认值
+      if (!formData.value.rerankModel && rerankModelOptions.value.length > 0) {
+        formData.value.rerankModel = rerankModelOptions.value[0].value;
+      }
+      if (!formData.value.rerankTopN) {
+        formData.value.rerankTopN = Math.min(
+          5,
+          formData.value.retrieveLimit || 5,
+        );
+      }
+      if (formData.value.rerankScoreThreshold === undefined) {
+        formData.value.rerankScoreThreshold = 0.5;
+      }
+    } else {
+      formRules.value.rerankModel = [{ required: false }];
     }
-    if (!formData.value.rerankTopN) {
-      formData.value.rerankTopN = Math.min(5, formData.value.retrieveLimit || 5);
-    }
-    if (formData.value.rerankScoreThreshold === undefined) {
-      formData.value.rerankScoreThreshold = 0.5;
-    }
-  }
-});
+  },
+);
 
 async function handleOpen(id?: string | number) {
   loading.value = true;
@@ -153,16 +182,19 @@ async function handleOpen(id?: string | number) {
       const filterRecord = pick(record, Object.keys(defaultValues));
       formData.value = filterRecord;
     } else {
-      const defaultEmbeddingModel = embeddingModelOptions.value.length > 0
-        ? embeddingModelOptions.value[0].value
-        : undefined;
-      const defaultRerankModel = rerankModelOptions.value.length > 0
-        ? rerankModelOptions.value[0].value
-        : undefined;
+      const defaultEmbeddingModel =
+        embeddingModelOptions.value.length > 0
+          ? embeddingModelOptions.value[0].value
+          : undefined;
+      const defaultRerankModel =
+        rerankModelOptions.value.length > 0
+          ? rerankModelOptions.value[0].value
+          : undefined;
 
       formData.value = {
         ...defaultValues,
         share: 0,
+        enableHybrid: 0,
         vectorModel: 'weaviate',
         embeddingModel: defaultEmbeddingModel,
         retrieveLimit: 5,
@@ -225,7 +257,22 @@ defineExpose({
       </FormItem>
       <FormItem label="是否公开" v-bind="validateInfos.share">
         <RadioGroup v-model:value="formData.share">
-          <Radio v-for="option in shareOptions" :key="option.value" :value="option.value">
+          <Radio
+            v-for="option in shareOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </Radio>
+        </RadioGroup>
+      </FormItem>
+      <FormItem label="是否启用混合检索" v-bind="validateInfos.enableHybrid">
+        <RadioGroup v-model:value="formData.enableHybrid">
+          <Radio
+            v-for="option in shareOptions"
+            :key="option.value"
+            :value="option.value"
+          >
             {{ option.label }}
           </Radio>
         </RadioGroup>
@@ -306,7 +353,7 @@ defineExpose({
             :min="1"
             :max="formData.retrieveLimit || 100"
           />
-          <div v-if="formData.retrieveLimit" class="text-gray-400 text-xs mt-1">
+          <div v-if="formData.retrieveLimit" class="mt-1 text-xs text-gray-400">
             不能超过检索条数 ({{ formData.retrieveLimit }})
           </div>
         </FormItem>
@@ -319,7 +366,9 @@ defineExpose({
               :step="0.01"
               style="flex: 1"
             />
-            <span class="w-12 text-right">{{ (formData.rerankScoreThreshold || 0).toFixed(2) }}</span>
+            <span class="w-12 text-right">{{
+              (formData.rerankScoreThreshold || 0).toFixed(2)
+            }}</span>
           </div>
         </FormItem>
       </template>
