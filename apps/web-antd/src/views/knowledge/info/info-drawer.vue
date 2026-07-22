@@ -42,6 +42,7 @@ const defaultValues: Partial<InfoForm> = {
   id: undefined,
   name: undefined,
   share: undefined,
+  autoParse: undefined,
   enableHybrid: undefined,
   description: undefined,
   separator: undefined,
@@ -65,6 +66,7 @@ type AntdFormRules<T> = Partial<Record<keyof T, RuleObject[]>> & {
 
 const formRules = ref<AntdFormRules<InfoForm>>({
   name: [{ required: true, message: '知识库名称不能为空' }],
+  autoParse: [{ required: true, message: '请选择是否自动解析' }],
   share: [{ required: true, message: '请选择是否公开' }],
   enableHybrid: [{ required: true, message: '请选择是否启用混合检索' }],
   vectorModel: [{ required: true, message: '请选择向量库' }],
@@ -92,6 +94,11 @@ const rerankModelOptions = ref<Array<{ label: string; value: string }>>([]);
 const shareOptions = [
   { label: '是', value: 1 },
   { label: '否', value: 0 },
+];
+
+const parseOptions = [
+  { label: '是', value: true },
+  { label: '否', value: false },
 ];
 
 const { validate, validateInfos, resetFields } = Form.useForm(
@@ -194,6 +201,7 @@ async function handleOpen(id?: string | number) {
       formData.value = {
         ...defaultValues,
         share: 0,
+        autoParse: false,
         enableHybrid: 0,
         vectorModel: 'weaviate',
         embeddingModel: defaultEmbeddingModel,
@@ -254,6 +262,17 @@ defineExpose({
           v-model:value="formData.name"
           :placeholder="$t('ui.formRules.required')"
         />
+      </FormItem>
+      <FormItem label="是否自动解析" v-bind="validateInfos.autoParse">
+        <RadioGroup v-model:value="formData.autoParse">
+          <Radio
+            v-for="option in parseOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </Radio>
+        </RadioGroup>
       </FormItem>
       <FormItem label="是否公开" v-bind="validateInfos.share">
         <RadioGroup v-model:value="formData.share">
