@@ -3,6 +3,8 @@ import { unmountGlobalLoading } from '@vben/utils';
 
 import { overridesPreferences } from './preferences';
 
+import {useSystemStore} from "../src/store";
+
 /**
  * 应用初始化完成之后再进行页面加载渲染
  */
@@ -26,6 +28,9 @@ async function initApplication() {
 
   // 移除并销毁loading
   unmountGlobalLoading();
+
+  const systemStore = useSystemStore();
+  await systemStore.fetchAppTitle();
 }
 
 initApplication();

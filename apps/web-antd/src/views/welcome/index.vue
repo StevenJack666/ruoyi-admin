@@ -6,7 +6,7 @@
         <h1 class="title">
           欢迎使用
           <br />
-          <span class="highlight">数字人</span>
+          <!-- <span class="highlight">数字人</span> -->
         </h1>
         <!-- <p class="desc">实时防护 · 数据加密 · 安全可控</p> -->
       </div>
